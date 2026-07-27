@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Taboo — Lexique psychiatrique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2C4A52">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Taboo Psy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A32;
+    --paper:#E9EEEC;
+    --paper-card:#FBFAF7;
+    --primary:#2C4A52;
+    --primary-light:#3E6772;
+    --accent:#C9484B;
+    --accent2:#E0A730;
+    --line: rgba(30,42,50,.14);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% 8%, rgba(44,74,82,.06), transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(201,72,75,.05), transparent 40%),
+      var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding: 28px 18px 60px;
+  }
+  .wrap{max-width:880px; margin:0 auto;}
+
+  header{ text-align:center; margin-bottom:26px; }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--primary-light);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(28px, 5vw, 42px);
+    margin:0 0 6px;
+    color:var(--primary);
+  }
+  .sub{ color:#5b6b71; font-size:14.5px; max-width:520px; margin:0 auto; }
+
+  /* Category chips */
+  .cats{
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    margin: 22px 0 26px;
+  }
+  .cat-chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    padding:7px 13px;
+    border-radius:999px;
+    border:1.5px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+    display:flex; align-items:center; gap:7px;
+    transition:.15s;
+    color:var(--ink);
+  }
+  .cat-chip .dot{width:8px;height:8px;border-radius:50%;flex:none;}
+  .cat-chip.active{ border-color:currentColor; color:#fff; }
+  .cat-chip.active .dot{ background:#fff !important; }
+  .cat-chip:hover{ transform:translateY(-1px); }
+
+  /* Score / timer row */
+  .hud{
+    display:flex; justify-content:center; align-items:center; gap:26px;
+    margin-bottom:22px; flex-wrap:wrap;
+  }
+  .hud-item{ text-align:center; }
+  .hud-label{ font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#7a8a90;}
+  .hud-value{ font-family:'Fraunces',serif; font-weight:600; font-size:30px; color:var(--primary);}
+  #timerRing{ position:relative; width:74px; height:74px; }
+  #timerRing svg{ transform:rotate(-90deg); }
+  #timerVal{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:17px; color:var(--primary);
+  }
+
+  /* Card */
+  .stage{ display:flex; justify-content:center; margin: 10px 0 28px; perspective:1200px;}
+  .card{
+    width:100%; max-width:420px; min-height:430px;
+    background:var(--paper-card);
+    border-radius:var(--radius);
+    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 18px 40px -18px rgba(30,42,50,.35);
+    position:relative;
+    padding:26px 26px 22px;
+    border:1px solid var(--line);
+    display:flex; flex-direction:column;
+  }
+  .card::before{
+    content:"";
+    position:absolute; top:0; left:26px; right:26px; height:10px;
+    background-image: radial-gradient(circle, var(--paper) 5px, transparent 5.5px);
+    background-size: 22px 22px;
+    background-position: 0 0;
+    background-repeat: repeat-x;
+  }
+  .cat-tab{
+    align-self:flex-start;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+    padding:5px 11px; border-radius:6px 6px 0 0; color:#fff;
+    margin-top:10px;
+  }
+  .card-id{
+    position:absolute; top:14px; right:20px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a6b0b3;
+  }
+  .word{
+    font-family:'Fraunces',serif; font-weight:700;
+    font-size:clamp(30px, 6vw, 40px);
+    color:var(--ink);
+    margin:22px 0 18px;
+    line-height:1.05;
+  }
+  .forbid-box{
+    border:1.5px dashed var(--accent);
+    border-radius:10px;
+    padding:14px 16px;
+    background: repeating-linear-gradient(135deg, rgba(201,72,75,.05) 0 10px, rgba(201,72,75,.02) 10px 20px);
+    flex:1;
+  }
+  .forbid-label{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:9px; font-weight:600;
+  }
+  .forbid-list{ list-style:none; margin:0; padding:0; }
+  .forbid-list li{
+    font-size:16.5px; padding:5px 0; border-bottom:1px solid rgba(201,72,75,.15);
+    color:#3a2a2a;
+  }
+  .forbid-list li:last-child{ border-bottom:none; }
+
+  .placeholder{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    flex:1; text-align:center; color:#8a9599; gap:10px;
+  }
+  .placeholder .big{ font-family:'Fraunces',serif; font-size:20px; color:var(--primary-light); }
+
+  /* Controls */
+  .controls{ display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-bottom:10px;}
+  button{
+    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px;
+    border:none; border-radius:10px; padding:12px 18px; cursor:pointer;
+    transition:.15s; display:flex; align-items:center; gap:8px;
+  }
+  button:active{ transform:scale(.97); }
+  .btn-draw{ background:var(--primary); color:#fff; }
+  .btn-draw:hover{ background:var(--primary-light); }
+  .btn-found{ background:#3E7C4A; color:#fff; }
+  .btn-found:hover{ background:#4b9358;}
+  .btn-skip{ background:#eee; color:var(--ink); }
+  .btn-skip:hover{ background:#e2e2e2; }
+  .btn-taboo{ background:var(--accent); color:#fff; }
+  .btn-taboo:hover{ background:#d95c5f; }
+  .btn-timer{ background:var(--accent2); color:#3a2a05; }
+  .btn-reset{ background:transparent; color:#8a9599; text-decoration:underline; }
+
+  footer{ text-align:center; margin-top:34px; font-size:12px; color:#9aa5a8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Altage · Formation clinique</div>
+    <h1>Taboo — Lexique psychiatrique</h1>
+    <p class="sub">Fais deviner le mot à ton binôme sans jamais prononcer les termes interdits. Choisis une ou plusieurs catégories, tire une carte, lance le chrono.</p>
+  </header>
+
+  <div class="cats" id="cats"></div>
+
+  <div class="hud">
+    <div class="hud-item">
+      <div class="hud-label">Score</div>
+      <div class="hud-value" id="scoreVal">0</div>
+    </div>
+    <div class="hud-item">
+      <div id="timerRing">
+        <svg width="74" height="74">
+          <circle cx="37" cy="37" r="31" fill="none" stroke="#dfe4e2" stroke-width="6"/>
+          <circle id="ringProgress" cx="37" cy="37" r="31" fill="none" stroke="var(--accent2)" stroke-width="6"
+            stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="0"/>
+        </svg>
+        <div id="timerVal">60</div>
+      </div>
+    </div>
+    <div class="hud-item">
+      <div class="hud-label">Cartes restantes</div>
+      <div class="hud-value" id="remainVal">0</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="card" id="card">
+      <span class="card-id" id="cardId"></span>
+      <div class="cat-tab" id="catTab" style="visibility:hidden;">catégorie</div>
+      <div id="cardBody" class="placeholder">
+        <div class="big">Prêt(e) ?</div>
+        <div>Choisis une catégorie puis tire ta première carte.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>
+    <button class="btn-found" id="foundBtn">✅ Trouvé</button>
+    <button class="btn-skip" id="skipBtn">⏭️ Passé</button>
+    <button class="btn-taboo" id="tabooBtn">🚫 Mot interdit</button>
+  </div>
+  <div class="controls">
+    <button class="btn-timer" id="timerBtn">▶️ Démarrer 60s</button>
+    <button class="btn-reset" id="resetBtn">réinitialiser la partie</button>
+  </div>
+
+  <footer>Basé sur le lexique psychiatrique Altage (v.03, 06.02.2025) — usage pédagogique interne.</footer>
+</div>
+
+<script>
+const CATEGORIES = [
+  {id:'emotions', label:'Émotions & affects', color:'#3E7C7C'},
+  {id:'langage', label:'Langage & discours', color:'#6C4F8C'},
+  {id:'pensee', label:'Pensée & idées délirantes', color:'#B0413E'},
+  {id:'perceptions', label:'Perceptions', color:'#35507A'},
+  {id:'moteur', label:'Comportement moteur', color:'#C9762B'},
+  {id:'cognition', label:'Conscience & cognition', color:'#46607A'},
+  {id:'comportement', label:'Comportement & personnalité', color:'#4C7A4C'},
+  {id:'anxiete', label:'Anxiété & phobies', color:'#B8971F'},
+  {id:'humeur', label:'Troubles de l\'humeur', color:'#B85C8A'},
+  {id:'urgences', label:'Urgences & addictions', color:'#8C2F2F'},
+];
+
+const DECK = [
+// Émotions & affects
+{c:'emotions', w:'Affect', f:['émotion','ressenti','expression','comportement observable']},
+{c:'emotions', w:'Anhédonie', f:['plaisir','positif','émotion','incapacité']},
+{c:'emotions', w:'Ambivalence', f:['contradictoire','simultané','opposé','sentiment']},
+{c:'emotions', w:'Apathie', f:['indifférence','désintérêt','émotion','absence']},
+{c:'emotions', w:'Athymhormie', f:['élan vital','motivation','affectivité','perte']},
+{c:'emotions', w:'Dysphorie', f:['irritabilité','tristesse','humeur','déplaisant']},
+{c:'emotions', w:'Euphorie', f:['joie','excessive','gaieté','humeur']},
+{c:'emotions', w:'Euthymie', f:['stable','neutre','équilibre','humeur']},
+{c:'emotions', w:'Anesthésie affective', f:['froideur','absence','ressenti','émotion']},
+{c:'emotions', w:'Discordance idéo-affective', f:['contradiction','discours','émotion','incohérence']},
+
+// Langage & discours
+{c:'langage', w:'Alogie', f:['pauvreté','langage','réponse','appauvrissement']},
+{c:'langage', w:'Barrages', f:['suspension','discours','brusque','arrêt']},
+{c:'langage', w:'Coq à l\'âne', f:['sujet','lien','idée','passer d\'un à l\'autre']},
+{c:'langage', w:'Diffluence', f:['désorganisé','dispersé','pensée','discours']},
+{c:'langage', w:'Discours circonstancié', f:['détail','inutile','recentrer','propos']},
+{c:'langage', w:'Discours tangentiel', f:['écart','but','sujet','perdu']},
+{c:'langage', w:'Echolalie', f:['répétition','mot','dernier','entendu']},
+{c:'langage', w:'Logorrhée', f:['débit','parole','élevé','intarissable']},
+{c:'langage', w:'Néologisme', f:['mot','invention','symbolique','sens']},
+{c:'langage', w:'Palilalie', f:['répétition','syllabe','mot','constante']},
+{c:'langage', w:'Persévération', f:['répète','insistance','involontaire','réponse']},
+{c:'langage', w:'Salade de mots', f:['assemblage','aléatoire','mots','lien logique']},
+{c:'langage', w:'Coprolalie', f:['mots','grossiers','émission','langage']},
+{c:'langage', w:'Tachyphémie', f:['rythme','accéléré','verbal','débit']},
+{c:'langage', w:'Bradyphémie', f:['lenteur','rythme','verbal','parole']},
+
+// Pensée & idées délirantes
+{c:'pensee', w:'Bradypsychie', f:['ralentissement','pensée','idée','lenteur']},
+{c:'pensee', w:'Tachypsychie', f:['précipitation','idée','vitesse','pensée']},
+{c:'pensee', w:'Fuite des idées', f:['défiler','vitesse','sujet','rapide']},
+{c:'pensee', w:'Idées fixes', f:['persistance','idée','s\'impose','champ intellectuel']},
+{c:'pensee', w:'Pensée concrète', f:['abstrait','faits','concret','focalisation']},
+{c:'pensee', w:'Idées délirantes', f:['conviction','fausse','croyance','réalité']},
+{c:'pensee', w:'Délire de persécution', f:['menace','danger','mal','sentiment']},
+{c:'pensee', w:'Délire mystique', f:['religion','thème','croyance','délirant']},
+{c:'pensee', w:'Mégalomanie', f:['puissance','grandeur','surestime','capacité']},
+{c:'pensee', w:'Idées de référence', f:['événement','rapporter','environnement','croit']},
+{c:'pensee', w:'Idées de contrôle', f:['objet','personne','régissent','comportement']},
+{c:'pensee', w:'Quérulence', f:['revendication','judiciaire','préjudice','responsabilité']},
+{c:'pensee', w:'Paranoïa', f:['méfiance','soupçon','interprétatif','réel']},
+
+// Perceptions
+{c:'perceptions', w:'Hallucination', f:['perception','stimulus','sensorielle','fausse']},
+{c:'perceptions', w:'Hallucination auditive', f:['voix','son','entendre','bruit']},
+{c:'perceptions', w:'Hallucination visuelle', f:['image','voir','perception','formée']},
+{c:'perceptions', w:'Illusion', f:['déformée','objet','réel','perception']},
+{c:'perceptions', w:'Echo de pensée', f:['pensée','répétée','voix','entendre']},
+{c:'perceptions', w:'Dépersonnalisation', f:['étrangeté','soi-même','détaché','corps']},
+{c:'perceptions', w:'Déréalisation', f:['réel','environnement','distorsion','irréel']},
+
+// Comportement moteur
+{c:'moteur', w:'Akathisie', f:['agitation','immobile','tension','moteur']},
+{c:'moteur', w:'Akinésie', f:['mouvement','initier','difficulté','volontaire']},
+{c:'moteur', w:'Ataxie', f:['coordination','mouvement','manque','fine']},
+{c:'moteur', w:'Bradykinésie', f:['ralentissement','mouvement','volontaire','lent']},
+{c:'moteur', w:'Catalepsie', f:['rigidité','posture','figée','musculaire']},
+{c:'moteur', w:'Catatonie', f:['immobilité','mutisme','réaction','absence']},
+{c:'moteur', w:'Dyskinésie', f:['mouvement','anormal','coordination','perturbation']},
+{c:'moteur', w:'Echopraxie', f:['imite','mouvement','automatique','autres']},
+{c:'moteur', w:'Sidération', f:['immobilisme','mort','apparente','état']},
+{c:'moteur', w:'Jactation', f:['gestes','désordonnés','sans','suite']},
+
+// Conscience & cognition
+{c:'cognition', w:'Confusion', f:['conscience','dissolution','désorganisation','mémoire']},
+{c:'cognition', w:'Obnubilation', f:['vigilance','conscience','obscurcissement','baisse']},
+{c:'cognition', w:'Agnosie', f:['reconnaître','objet','sensorielle','incapacité']},
+{c:'cognition', w:'Aphasie', f:['parler','langage','comprendre','perte']},
+{c:'cognition', w:'Confabulation', f:['mémoire','fausse','information','croit sincèrement']},
+{c:'cognition', w:'Dissociation', f:['rupture','intégration','mentale','fonction']},
+
+// Comportement & personnalité
+{c:'comportement', w:'Aboulie', f:['volonté','décision','choisir','incapacité']},
+{c:'comportement', w:'Apragmatisme', f:['action','projet','entreprendre','incapacité']},
+{c:'comportement', w:'Volition', f:['but','activité','accomplir','incapacité']},
+{c:'comportement', w:'Incurie', f:['hygiène','soin','négligence','manque']},
+{c:'comportement', w:'Clinophilie', f:['couché','permanence','durée','comportement']},
+{c:'comportement', w:'Désinhibition', f:['convenance','sociale','pudeur','comportement']},
+{c:'comportement', w:'Histrionisme', f:['théâtral','attention','expressivité','attitude']},
+{c:'comportement', w:'Psychopathie', f:['antisocial','comportement','personnalité','pathologique']},
+{c:'comportement', w:'Mythomanie', f:['vérité','altération','récit','imaginaire']},
+{c:'comportement', w:'Kleptomanie', f:['voler','objet','résister','impossibilité']},
+{c:'comportement', w:'Syllogomanie', f:['accumulation','compulsive','Diogène','objets']},
+
+// Anxiété & phobies
+{c:'anxiete', w:'Acrophobie', f:['hauteur','peur','élevé','crainte']},
+{c:'anxiete', w:'Agoraphobie', f:['échapper','secouru','situation','crainte']},
+{c:'anxiete', w:'Claustrophobie', f:['clos','lieu','confiné','peur']},
+{c:'anxiete', w:'Phobie', f:['peur','objet','situation','crainte']},
+{c:'anxiete', w:'Anxiété', f:['tension','peur','chronique','nerveuse']},
+{c:'anxiete', w:'Angoisse', f:['oppression','resserrement','malheur','intense']},
+{c:'anxiete', w:'Obsession', f:['préoccupation','pénible','contrôler','esprit']},
+{c:'anxiete', w:'Compulsion', f:['acte','résister','force','angoisse']},
+{c:'anxiete', w:'Rituels', f:['répété','précis','empêcher','action']},
+
+// Humeur
+{c:'humeur', w:'Manie', f:['surexcitation','exaltation','humeur','intellectuelle']},
+{c:'humeur', w:'Hypomanie', f:['humeur','expansive','activité','anormale']},
+{c:'humeur', w:'Mélancolie', f:['dépressive','tristesse','ralentissement','douleur']},
+{c:'humeur', w:'Cyclothymie', f:['exaltation','désespoir','période','humeur']},
+{c:'humeur', w:'Dysthymie', f:['dépressive','chronique','modérée','humeur']},
+{c:'humeur', w:'Dépression', f:['humeur','ralentissement','activité','pathologique']},
+
+// Urgences & addictions
+{c:'urgences', w:'Raptus', f:['soudain','impulsif','passage à l\'acte','tension']},
+{c:'urgences', w:'Crise clastique', f:['violence','objets','brise','contrôle']},
+{c:'urgences', w:'Délirium Tremens', f:['sevrage','alcool','complication','mental']},
+{c:'urgences', w:'Autolyse', f:['autodestructeur','mort','comportement','conduit']},
+{c:'urgences', w:'Craving', f:['envie','irrépressible','addictif','comportement']},
+{c:'urgences', w:'Anorexie mentale', f:['alimentaire','privation','refus','nourriture']},
+{c:'urgences', w:'Boulimie', f:['alimentation','excessive','ingestion','nourriture']},
+{c:'urgences', w:'Cachexie', f:['maigreur','extrême','affaiblissement','pronostic']},
+];
+
+const catMap = Object.fromEntries(CATEGORIES.map(c=>[c.id,c]));
+let activeCats = new Set(CATEGORIES.map(c=>c.id));
+let pool = [];
+let score = 0;
+let timerInterval = null;
+let timeLeft = 60;
+const TOTAL_TIME = 60;
+
+function refillPool(){
+  pool = DECK.filter(d => activeCats.has(d.c));
+  // shuffle
+  for(let i=pool.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [pool[i],pool[j]]=[pool[j],pool[i]];
+  }
+  updateRemain();
+}
+
+function updateRemain(){
+  document.getElementById('remainVal').textContent = pool.length;
+}
+
+function renderCats(){
+  const el = document.getElementById('cats');
+  el.innerHTML='';
+  CATEGORIES.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'cat-chip active';
+    chip.style.color = cat.color;
+    chip.style.background = cat.color;
+    chip.innerHTML = `<span class="dot"></span>${cat.label}`;
+    chip.addEventListener('click', ()=>{
+      if(activeCats.has(cat.id)){
+        if(activeCats.size>1) activeCats.delete(cat.id);
+      } else {
+        activeCats.add(cat.id);
+      }
+      renderCats();
+      refillPool();
+    });
+    if(!activeCats.has(cat.id)){
+      chip.classList.remove('active');
+      chip.style.background = '#fff';
+    }
+    el.appendChild(chip);
+  });
+}
+
+function drawCard(){
+  if(pool.length===0) refillPool();
+  if(pool.length===0) return;
+  const card = pool.pop();
+  updateRemain();
+  const cat = catMap[card.c];
+  const tab = document.getElementById('catTab');
+  tab.textContent = cat.label;
+  tab.style.background = cat.color;
+  tab.style.visibility = 'visible';
+  document.getElementById('cardId').textContent = '#'+(DECK.indexOf(card)+1).toString().padStart(2,'0');
+  document.getElementById('cardBody').innerHTML = `
+    <div class="word">${card.w}</div>
+    <div class="forbid-box">
+      <div class="forbid-label">Mots interdits</div>
+      <ul class="forbid-list">${card.f.map(w=>`<li>${w}</li>`).join('')}</ul>
+    </div>
+  `;
+}
+
+function setScore(v){
+  score = v;
+  document.getElementById('scoreVal').textContent = score;
+}
+
+function resetTimerDisplay(){
+  timeLeft = TOTAL_TIME;
+  document.getElementById('timerVal').textContent = timeLeft;
+  const ring = document.getElementById('ringProgress');
+  ring.style.strokeDashoffset = 0;
+  document.getElementById('timerBtn').textContent = '▶️ Démarrer 60s';
+}
+
+function startTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; resetTimerDisplay(); return; }
+  timeLeft = TOTAL_TIME;
+  document.getElementById('timerBtn').textContent = '⏸️ Arrêter';
+  const circumference = 194.8;
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    document.getElementById('timerVal').textContent = Math.max(timeLeft,0);
+    const ring = document.getElementById('ringProgress');
+    ring.style.strokeDashoffset = circumference * (1 - timeLeft/TOTAL_TIME);
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      timerInterval=null;
+      document.getElementById('timerVal').textContent = "⏰";
+      document.getElementById('timerBtn').textContent = '▶️ Démarrer 60s';
+    }
+  },1000);
+}
+
+document.getElementById('drawBtn').addEventListener('click', drawCard);
+document.getElementById('foundBtn').addEventListener('click', ()=>{ setScore(score+1); drawCard(); });
+document.getElementById('skipBtn').addEventListener('click', drawCard);
+document.getElementById('tabooBtn').addEventListener('click', ()=>{ setScore(score-1); drawCard(); });
+document.getElementById('timerBtn').addEventListener('click', startTimer);
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  setScore(0);
+  if(timerInterval){clearInterval(timerInterval); timerInterval=null;}
+  resetTimerDisplay();
+  activeCats = new Set(CATEGORIES.map(c=>c.id));
+  renderCats();
+  refillPool();
+  document.getElementById('cardId').textContent='';
+  document.getElementById('catTab').style.visibility='hidden';
+  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt(e) ?</div><div>Choisis une catégorie puis tire ta première carte.</div></div>`;
+});
+
+renderCats();
+refillPool();
+setScore(0);
+resetTimerDisplay();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
