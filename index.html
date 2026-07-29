@@ -150,6 +150,33 @@
   }
   .forbid-list li:last-child{ border-bottom:none; }
 
+  .def-toggle{
+    margin-top:14px;
+    width:100%;
+    background:none;
+    border:1.5px dashed var(--primary-light);
+    border-radius:10px;
+    padding:10px 14px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:13px; font-weight:600;
+    color:var(--primary);
+    cursor:pointer;
+    transition:.15s;
+  }
+  .def-toggle:hover{ background:rgba(44,74,82,.06); }
+  .def-box{
+    margin-top:12px;
+    border-radius:10px;
+    padding:14px 16px;
+    background: rgba(44,74,82,.05);
+    border:1.5px solid var(--primary-light);
+  }
+  .def-label{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--primary); margin-bottom:6px; font-weight:600;
+  }
+  .def-text{ font-size:15px; color:var(--ink); line-height:1.4; }
+
   .placeholder{
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     flex:1; text-align:center; color:#8a9599; gap:10px;
@@ -251,119 +278,119 @@ const CATEGORIES = [
 
 const DECK = [
 // Émotions & affects
-{c:'emotions', w:'Affect', f:['émotion','ressenti','expression','comportement observable']},
-{c:'emotions', w:'Anhédonie', f:['plaisir','positif','émotion','incapacité']},
-{c:'emotions', w:'Ambivalence', f:['contradictoire','simultané','opposé','sentiment']},
-{c:'emotions', w:'Apathie', f:['indifférence','désintérêt','émotion','absence']},
-{c:'emotions', w:'Athymhormie', f:['élan vital','motivation','affectivité','perte']},
-{c:'emotions', w:'Dysphorie', f:['irritabilité','tristesse','humeur','déplaisant']},
-{c:'emotions', w:'Euphorie', f:['joie','excessive','gaieté','humeur']},
-{c:'emotions', w:'Euthymie', f:['stable','neutre','équilibre','humeur']},
-{c:'emotions', w:'Anesthésie affective', f:['froideur','absence','ressenti','émotion']},
-{c:'emotions', w:'Discordance idéo-affective', f:['contradiction','discours','émotion','incohérence']},
+{c:'emotions', w:'Affect', f:['émotion','ressenti','expression','comportement observable'], d:"Ensemble de comportements observables qui expriment un état émotionnel."},
+{c:'emotions', w:'Anhédonie', f:['plaisir','positif','émotion','incapacité'], d:"Incapacité à ressentir des émotions positives, du plaisir."},
+{c:'emotions', w:'Ambivalence', f:['contradictoire','simultané','opposé','sentiment'], d:"Affects contradictoires simultanés pour un même objet."},
+{c:'emotions', w:'Apathie', f:['indifférence','désintérêt','émotion','absence'], d:"État d'indifférence aux émotions, absence de désir, désintérêt pour l'environnement."},
+{c:'emotions', w:'Athymhormie', f:['élan vital','motivation','affectivité','perte'], d:"Perte de l'élan vital et de l'affectivité."},
+{c:'emotions', w:'Dysphorie', f:['irritabilité','tristesse','humeur','déplaisant'], d:"Perturbation de l'humeur caractérisée par l'irritabilité et un sentiment déplaisant de tristesse ou d'anxiété."},
+{c:'emotions', w:'Euphorie', f:['joie','excessive','gaieté','humeur'], d:"Joie excessive."},
+{c:'emotions', w:'Euthymie', f:['stable','neutre','équilibre','humeur'], d:"Humeur neutre et stable, état d'équilibre émotionnel."},
+{c:'emotions', w:'Anesthésie affective', f:['froideur','absence','ressenti','émotion'], d:"Disparition complète des affects, froideur ou absence totale de ressenti émotionnel."},
+{c:'emotions', w:'Discordance idéo-affective', f:['contradiction','discours','émotion','incohérence'], d:"Coexistence d'un discours et d'émotions contradictoires."},
 
 // Langage & discours
-{c:'langage', w:'Alogie', f:['pauvreté','langage','réponse','appauvrissement']},
-{c:'langage', w:'Barrages', f:['suspension','discours','brusque','arrêt']},
-{c:'langage', w:'Coq à l\'âne', f:['sujet','lien','idée','passer d\'un à l\'autre']},
-{c:'langage', w:'Diffluence', f:['désorganisé','dispersé','pensée','discours']},
-{c:'langage', w:'Discours circonstancié', f:['détail','inutile','recentrer','propos']},
-{c:'langage', w:'Discours tangentiel', f:['écart','but','sujet','perdu']},
-{c:'langage', w:'Echolalie', f:['répétition','mot','dernier','entendu']},
-{c:'langage', w:'Logorrhée', f:['débit','parole','élevé','intarissable']},
-{c:'langage', w:'Néologisme', f:['mot','invention','symbolique','sens']},
-{c:'langage', w:'Palilalie', f:['répétition','syllabe','mot','constante']},
-{c:'langage', w:'Persévération', f:['répète','insistance','involontaire','réponse']},
-{c:'langage', w:'Salade de mots', f:['assemblage','aléatoire','mots','lien logique']},
-{c:'langage', w:'Coprolalie', f:['mots','grossiers','émission','langage']},
-{c:'langage', w:'Tachyphémie', f:['rythme','accéléré','verbal','débit']},
-{c:'langage', w:'Bradyphémie', f:['lenteur','rythme','verbal','parole']},
+{c:'langage', w:'Alogie', f:['pauvreté','langage','réponse','appauvrissement'], d:"Symptôme négatif : appauvrissement du cours de la pensée perceptible dans le langage (ex. réponses par oui/non)."},
+{c:'langage', w:'Barrages', f:['suspension','discours','brusque','arrêt'], d:"Brusque suspension du langage."},
+{c:'langage', w:'Coq à l\'âne', f:['sujet','lien','idée','passer d\'un à l\'autre'], d:"Passer d'une expression à une autre, d'une idée à l'autre, sans forcément de lien entre elles."},
+{c:'langage', w:'Diffluence', f:['désorganisé','dispersé','pensée','discours'], d:"La pensée et le discours deviennent dispersés, désorganisés, sans direction claire ni logique."},
+{c:'langage', w:'Discours circonstancié', f:['détail','inutile','recentrer','propos'], d:"Le patient se perd dans des détails inutiles et n'arrive pas à conclure son propos sans être recentré."},
+{c:'langage', w:'Discours tangentiel', f:['écart','but','sujet','perdu'], d:"Discours qui s'écarte du sujet principal ; le patient n'arrive jamais au but."},
+{c:'langage', w:'Echolalie', f:['répétition','mot','dernier','entendu'], d:"Répétition du ou des derniers mots entendus par le patient."},
+{c:'langage', w:'Logorrhée', f:['débit','parole','élevé','intarissable'], d:"Débit de paroles très élevé, intarissable."},
+{c:'langage', w:'Néologisme', f:['mot','invention','symbolique','sens'], d:"Invention involontaire de mots investis d'une signification symbolique pour le patient, mais sans sens pour les autres."},
+{c:'langage', w:'Palilalie', f:['répétition','syllabe','mot','constante'], d:"Répétition quasi constante de mots et de syllabes."},
+{c:'langage', w:'Persévération', f:['répète','insistance','involontaire','réponse'], d:"Le patient répète ou prolonge avec insistance et involontairement les mêmes réponses."},
+{c:'langage', w:'Salade de mots', f:['assemblage','aléatoire','mots','lien logique'], d:"Les mots sont assemblés de manière aléatoire, sans lien logique."},
+{c:'langage', w:'Coprolalie', f:['mots','grossiers','émission','langage'], d:"Émission importante de mots grossiers."},
+{c:'langage', w:'Tachyphémie', f:['rythme','accéléré','verbal','débit'], d:"Accélération du rythme verbal."},
+{c:'langage', w:'Bradyphémie', f:['lenteur','rythme','verbal','parole'], d:"Lenteur du rythme verbal."},
 
 // Pensée & idées délirantes
-{c:'pensee', w:'Bradypsychie', f:['ralentissement','pensée','idée','lenteur']},
-{c:'pensee', w:'Tachypsychie', f:['précipitation','idée','vitesse','pensée']},
-{c:'pensee', w:'Fuite des idées', f:['défiler','vitesse','sujet','rapide']},
-{c:'pensee', w:'Idées fixes', f:['persistance','idée','s\'impose','champ intellectuel']},
-{c:'pensee', w:'Pensée concrète', f:['abstrait','faits','concret','focalisation']},
-{c:'pensee', w:'Idées délirantes', f:['conviction','fausse','croyance','réalité']},
-{c:'pensee', w:'Délire de persécution', f:['menace','danger','mal','sentiment']},
-{c:'pensee', w:'Délire mystique', f:['religion','thème','croyance','délirant']},
-{c:'pensee', w:'Mégalomanie', f:['puissance','grandeur','surestime','capacité']},
-{c:'pensee', w:'Idées de référence', f:['événement','rapporter','environnement','croit']},
-{c:'pensee', w:'Idées de contrôle', f:['objet','personne','régissent','comportement']},
-{c:'pensee', w:'Quérulence', f:['revendication','judiciaire','préjudice','responsabilité']},
-{c:'pensee', w:'Paranoïa', f:['méfiance','soupçon','interprétatif','réel']},
+{c:'pensee', w:'Bradypsychie', f:['ralentissement','pensée','idée','lenteur'], d:"Ralentissement du cours de la pensée, avec appauvrissement centré sur une idée."},
+{c:'pensee', w:'Tachypsychie', f:['précipitation','idée','vitesse','pensée'], d:"Précipitation des idées : l'esprit va plus vite que les paroles."},
+{c:'pensee', w:'Fuite des idées', f:['défiler','vitesse','sujet','rapide'], d:"Impression subjective que les pensées défilent à grande vitesse, passage rapide d'un sujet à l'autre."},
+{c:'pensee', w:'Idées fixes', f:['persistance','idée','s\'impose','champ intellectuel'], d:"Idée qui envahit le champ intellectuel et s'impose avec persistance."},
+{c:'pensee', w:'Pensée concrète', f:['abstrait','faits','concret','focalisation'], d:"Focalisation sur des faits précis et concrets plutôt que sur des questions générales et abstraites."},
+{c:'pensee', w:'Idées délirantes', f:['conviction','fausse','croyance','réalité'], d:"Convictions personnelles fausses, sans rapport avec la réalité, maintenues malgré les preuves du contraire."},
+{c:'pensee', w:'Délire de persécution', f:['menace','danger','mal','sentiment'], d:"Le patient se sent en danger, a le sentiment que les gens lui veulent du mal."},
+{c:'pensee', w:'Délire mystique', f:['religion','thème','croyance','délirant'], d:"Thème délirant centré sur la religion."},
+{c:'pensee', w:'Mégalomanie', f:['puissance','grandeur','surestime','capacité'], d:"Surestime de soi et de ses capacités, idée de puissance et de grandeur."},
+{c:'pensee', w:'Idées de référence', f:['événement','rapporter','environnement','croit'], d:"Le patient croit que tous les événements de l'environnement se rapportent à lui."},
+{c:'pensee', w:'Idées de contrôle', f:['objet','personne','régissent','comportement'], d:"Le patient croit que certains objets ou certaines personnes régissent son comportement."},
+{c:'pensee', w:'Quérulence', f:['revendication','judiciaire','préjudice','responsabilité'], d:"Délire de revendication conduisant à multiplier les actions judiciaires pour un préjudice réel ou fictif."},
+{c:'pensee', w:'Paranoïa', f:['méfiance','soupçon','interprétatif','réel'], d:"Délire interprétatif construit sur une perception faussée du réel, méfiance excessive."},
 
 // Perceptions
-{c:'perceptions', w:'Hallucination', f:['perception','stimulus','sensorielle','fausse']},
-{c:'perceptions', w:'Hallucination auditive', f:['voix','son','entendre','bruit']},
-{c:'perceptions', w:'Hallucination visuelle', f:['image','voir','perception','formée']},
-{c:'perceptions', w:'Illusion', f:['déformée','objet','réel','perception']},
-{c:'perceptions', w:'Echo de pensée', f:['pensée','répétée','voix','entendre']},
-{c:'perceptions', w:'Dépersonnalisation', f:['étrangeté','soi-même','détaché','corps']},
-{c:'perceptions', w:'Déréalisation', f:['réel','environnement','distorsion','irréel']},
+{c:'perceptions', w:'Hallucination', f:['perception','stimulus','sensorielle','fausse'], d:"Perception sensorielle sans présence d'un stimulus détectable."},
+{c:'perceptions', w:'Hallucination auditive', f:['voix','son','entendre','bruit'], d:"Fausse perception du son ; le plus souvent le patient entend des voix."},
+{c:'perceptions', w:'Hallucination visuelle', f:['image','voir','perception','formée'], d:"Fausse perception visuelle, image formée (personnes) ou non formée (éclairs de lumière)."},
+{c:'perceptions', w:'Illusion', f:['déformée','objet','réel','perception'], d:"Perception déformée d'un objet réel."},
+{c:'perceptions', w:'Echo de pensée', f:['pensée','répétée','voix','entendre'], d:"Le sujet entend ses propres pensées répétées à voix haute, comme renvoyées par un écho."},
+{c:'perceptions', w:'Dépersonnalisation', f:['étrangeté','soi-même','détaché','corps'], d:"Sentiment d'étrangeté et de perte du sens de soi-même, impression d'être détaché de son corps."},
+{c:'perceptions', w:'Déréalisation', f:['réel','environnement','distorsion','irréel'], d:"Perte du rapport avec le réel ; l'environnement semble irréel, flou ou distordu."},
 
 // Comportement moteur
-{c:'moteur', w:'Akathisie', f:['agitation','immobile','tension','moteur']},
-{c:'moteur', w:'Akinésie', f:['mouvement','initier','difficulté','volontaire']},
-{c:'moteur', w:'Ataxie', f:['coordination','mouvement','manque','fine']},
-{c:'moteur', w:'Bradykinésie', f:['ralentissement','mouvement','volontaire','lent']},
-{c:'moteur', w:'Catalepsie', f:['rigidité','posture','figée','musculaire']},
-{c:'moteur', w:'Catatonie', f:['immobilité','mutisme','réaction','absence']},
-{c:'moteur', w:'Dyskinésie', f:['mouvement','anormal','coordination','perturbation']},
-{c:'moteur', w:'Echopraxie', f:['imite','mouvement','automatique','autres']},
-{c:'moteur', w:'Sidération', f:['immobilisme','mort','apparente','état']},
-{c:'moteur', w:'Jactation', f:['gestes','désordonnés','sans','suite']},
+{c:'moteur', w:'Akathisie', f:['agitation','immobile','tension','moteur'], d:"Trouble moteur : agitation et incapacité à rester immobile, avec sensation interne de tension."},
+{c:'moteur', w:'Akinésie', f:['mouvement','initier','difficulté','volontaire'], d:"Difficulté à initier des mouvements volontaires."},
+{c:'moteur', w:'Ataxie', f:['coordination','mouvement','manque','fine'], d:"Mauvaise coordination, manque de coordination fine des mouvements volontaires."},
+{c:'moteur', w:'Bradykinésie', f:['ralentissement','mouvement','volontaire','lent'], d:"Ralentissement des mouvements volontaires."},
+{c:'moteur', w:'Catalepsie', f:['rigidité','posture','figée','musculaire'], d:"Rigidité musculaire et maintien prolongé de postures figées."},
+{c:'moteur', w:'Catatonie', f:['immobilité','mutisme','réaction','absence'], d:"Syndrome psychomoteur : absence de réaction aux stimulations, immobilité totale, mutisme."},
+{c:'moteur', w:'Dyskinésie', f:['mouvement','anormal','coordination','perturbation'], d:"Mouvement anormal, perturbation de la coordination des mouvements."},
+{c:'moteur', w:'Echopraxie', f:['imite','mouvement','automatique','autres'], d:"Le patient imite de manière automatique les mouvements faits par les autres."},
+{c:'moteur', w:'Sidération', f:['immobilisme','mort','apparente','état'], d:"État de mort apparente, immobilisme."},
+{c:'moteur', w:'Jactation', f:['gestes','désordonnés','sans','suite'], d:"Gestes désordonnés et sans suite."},
 
 // Conscience & cognition
-{c:'cognition', w:'Confusion', f:['conscience','dissolution','désorganisation','mémoire']},
-{c:'cognition', w:'Obnubilation', f:['vigilance','conscience','obscurcissement','baisse']},
-{c:'cognition', w:'Agnosie', f:['reconnaître','objet','sensorielle','incapacité']},
-{c:'cognition', w:'Aphasie', f:['parler','langage','comprendre','perte']},
-{c:'cognition', w:'Confabulation', f:['mémoire','fausse','information','croit sincèrement']},
-{c:'cognition', w:'Dissociation', f:['rupture','intégration','mentale','fonction']},
+{c:'cognition', w:'Confusion', f:['conscience','dissolution','désorganisation','mémoire'], d:"Dissolution plus ou moins complète de la conscience, avec altération de la mémoire et du langage."},
+{c:'cognition', w:'Obnubilation', f:['vigilance','conscience','obscurcissement','baisse'], d:"Obscurcissement de l'état de conscience, baisse de la vigilance et ralentissement de la pensée."},
+{c:'cognition', w:'Agnosie', f:['reconnaître','objet','sensorielle','incapacité'], d:"Incapacité à reconnaître les objets alors que les fonctions sensorielles sont intactes."},
+{c:'cognition', w:'Aphasie', f:['parler','langage','comprendre','perte'], d:"Perte partielle ou totale de la capacité à parler ou à comprendre le langage."},
+{c:'cognition', w:'Confabulation', f:['mémoire','fausse','information','croit sincèrement'], d:"Production d'informations fausses que la personne croit sincèrement vraies, liée à un déficit mnésique."},
+{c:'cognition', w:'Dissociation', f:['rupture','intégration','mentale','fonction'], d:"Rupture ou distorsion dans la cohésion des fonctions psychiques (pensée, mémoire, identité, perception)."},
 
 // Comportement & personnalité
-{c:'comportement', w:'Aboulie', f:['volonté','décision','choisir','incapacité']},
-{c:'comportement', w:'Apragmatisme', f:['action','projet','entreprendre','incapacité']},
-{c:'comportement', w:'Volition', f:['but','activité','accomplir','incapacité']},
-{c:'comportement', w:'Incurie', f:['hygiène','soin','négligence','manque']},
-{c:'comportement', w:'Clinophilie', f:['couché','permanence','durée','comportement']},
-{c:'comportement', w:'Désinhibition', f:['convenance','sociale','pudeur','comportement']},
-{c:'comportement', w:'Histrionisme', f:['théâtral','attention','expressivité','attitude']},
-{c:'comportement', w:'Psychopathie', f:['antisocial','comportement','personnalité','pathologique']},
-{c:'comportement', w:'Mythomanie', f:['vérité','altération','récit','imaginaire']},
-{c:'comportement', w:'Kleptomanie', f:['voler','objet','résister','impossibilité']},
-{c:'comportement', w:'Syllogomanie', f:['accumulation','compulsive','Diogène','objets']},
+{c:'comportement', w:'Aboulie', f:['volonté','décision','choisir','incapacité'], d:"Diminution ou disparition de la volonté, incapacité à prendre des décisions."},
+{c:'comportement', w:'Apragmatisme', f:['action','projet','entreprendre','incapacité'], d:"Incapacité à entreprendre des actions, à réaliser des projets."},
+{c:'comportement', w:'Volition', f:['but','activité','accomplir','incapacité'], d:"Trouble de la volition : incapacité à accomplir des activités axées sur un but, malgré des capacités intactes."},
+{c:'comportement', w:'Incurie', f:['hygiène','soin','négligence','manque'], d:"Manque important d'hygiène et de soins, négligence."},
+{c:'comportement', w:'Clinophilie', f:['couché','permanence','durée','comportement'], d:"Comportement pathologique consistant à rester couché en permanence ou anormalement longtemps."},
+{c:'comportement', w:'Désinhibition', f:['convenance','sociale','pudeur','comportement'], d:"Perte des convenances sociales ; moins de pudeur et de réserve dans le comportement."},
+{c:'comportement', w:'Histrionisme', f:['théâtral','attention','expressivité','attitude'], d:"Tendance aux attitudes théâtrales et à l'hyper-expressivité, recherche constante d'attention."},
+{c:'comportement', w:'Psychopathie', f:['antisocial','comportement','personnalité','pathologique'], d:"Personnalité pathologique se manifestant surtout par des comportements antisociaux."},
+{c:'comportement', w:'Mythomanie', f:['vérité','altération','récit','imaginaire'], d:"Tendance à l'altération de la vérité, à la fabulation et à la construction de récits imaginaires."},
+{c:'comportement', w:'Kleptomanie', f:['voler','objet','résister','impossibilité'], d:"Impossibilité répétée de résister à l'envie de voler des objets."},
+{c:'comportement', w:'Syllogomanie', f:['accumulation','compulsive','Diogène','objets'], d:"Accumulation compulsive d'objets, type syndrome de Diogène."},
 
 // Anxiété & phobies
-{c:'anxiete', w:'Acrophobie', f:['hauteur','peur','élevé','crainte']},
-{c:'anxiete', w:'Agoraphobie', f:['échapper','secouru','situation','crainte']},
-{c:'anxiete', w:'Claustrophobie', f:['clos','lieu','confiné','peur']},
-{c:'anxiete', w:'Phobie', f:['peur','objet','situation','crainte']},
-{c:'anxiete', w:'Anxiété', f:['tension','peur','chronique','nerveuse']},
-{c:'anxiete', w:'Angoisse', f:['oppression','resserrement','malheur','intense']},
-{c:'anxiete', w:'Obsession', f:['préoccupation','pénible','contrôler','esprit']},
-{c:'anxiete', w:'Compulsion', f:['acte','résister','force','angoisse']},
-{c:'anxiete', w:'Rituels', f:['répété','précis','empêcher','action']},
+{c:'anxiete', w:'Acrophobie', f:['hauteur','peur','élevé','crainte'], d:"Peur de ce qui est en hauteur, de ce qui est élevé."},
+{c:'anxiete', w:'Agoraphobie', f:['échapper','secouru','situation','crainte'], d:"Trouble anxieux : crainte des situations où il est difficile de s'échapper ou d'être secouru."},
+{c:'anxiete', w:'Claustrophobie', f:['clos','lieu','confiné','peur'], d:"Peur des lieux clos, des espaces confinés."},
+{c:'anxiete', w:'Phobie', f:['peur','objet','situation','crainte'], d:"Peur très angoissante face à une situation ou un objet, qui disparaît si l'objet n'est plus présent."},
+{c:'anxiete', w:'Anxiété', f:['tension','peur','chronique','nerveuse'], d:"État de tension nerveuse, de peur mal différenciée et souvent chronique."},
+{c:'anxiete', w:'Angoisse', f:['oppression','resserrement','malheur','intense'], d:"État émotionnel intense d'oppression et de resserrement, crainte d'un malheur grave."},
+{c:'anxiete', w:'Obsession', f:['préoccupation','pénible','contrôler','esprit'], d:"Préoccupation permanente et pénible qui s'impose à l'esprit sans pouvoir être contrôlée."},
+{c:'anxiete', w:'Compulsion', f:['acte','résister','force','angoisse'], d:"Force intérieure poussant à accomplir certains actes, à laquelle on ne peut résister sans angoisse."},
+{c:'anxiete', w:'Rituels', f:['répété','précis','empêcher','action'], d:"Actions répétées à des moments précis que la personne ne peut s'empêcher de faire."},
 
 // Humeur
-{c:'humeur', w:'Manie', f:['surexcitation','exaltation','humeur','intellectuelle']},
-{c:'humeur', w:'Hypomanie', f:['humeur','expansive','activité','anormale']},
-{c:'humeur', w:'Mélancolie', f:['dépressive','tristesse','ralentissement','douleur']},
-{c:'humeur', w:'Cyclothymie', f:['exaltation','désespoir','période','humeur']},
-{c:'humeur', w:'Dysthymie', f:['dépressive','chronique','modérée','humeur']},
-{c:'humeur', w:'Dépression', f:['humeur','ralentissement','activité','pathologique']},
+{c:'humeur', w:'Manie', f:['surexcitation','exaltation','humeur','intellectuelle'], d:"Surexcitation générale des facultés intellectuelles et mentales, exaltation de l'humeur."},
+{c:'humeur', w:'Hypomanie', f:['humeur','expansive','activité','anormale'], d:"Humeur expansive ou irritable de façon anormale, avec augmentation de l'activité, moins marquée que la manie."},
+{c:'humeur', w:'Mélancolie', f:['dépressive','tristesse','ralentissement','douleur'], d:"Émotion dépressive dominante avec ralentissement psychomoteur et douleur morale."},
+{c:'humeur', w:'Cyclothymie', f:['exaltation','désespoir','période','humeur'], d:"Trouble de l'humeur où alternent des périodes d'exaltation et des périodes de désespoir."},
+{c:'humeur', w:'Dysthymie', f:['dépressive','chronique','modérée','humeur'], d:"Trouble chronique de l'humeur, dépressive et modérée mais persistante."},
+{c:'humeur', w:'Dépression', f:['humeur','ralentissement','activité','pathologique'], d:"État pathologique associant modification de l'humeur et ralentissement intellectuel et moteur."},
 
 // Urgences & addictions
-{c:'urgences', w:'Raptus', f:['soudain','impulsif','passage à l\'acte','tension']},
-{c:'urgences', w:'Crise clastique', f:['violence','objets','brise','contrôle']},
-{c:'urgences', w:'Délirium Tremens', f:['sevrage','alcool','complication','mental']},
-{c:'urgences', w:'Autolyse', f:['autodestructeur','mort','comportement','conduit']},
-{c:'urgences', w:'Craving', f:['envie','irrépressible','addictif','comportement']},
-{c:'urgences', w:'Anorexie mentale', f:['alimentaire','privation','refus','nourriture']},
-{c:'urgences', w:'Boulimie', f:['alimentation','excessive','ingestion','nourriture']},
-{c:'urgences', w:'Cachexie', f:['maigreur','extrême','affaiblissement','pronostic']},
+{c:'urgences', w:'Raptus', f:['soudain','impulsif','passage à l\'acte','tension'], d:"Épisode soudain, intense et incontrôlé de passage à l'acte, sous l'effet d'une tension psychique extrême."},
+{c:'urgences', w:'Crise clastique', f:['violence','objets','brise','contrôle'], d:"Manifestation aiguë de violence et de destructivité, la personne brise souvent des objets."},
+{c:'urgences', w:'Délirium Tremens', f:['sevrage','alcool','complication','mental'], d:"Complication grave du sevrage alcoolique, avec détérioration aiguë de l'état mental et symptômes physiques."},
+{c:'urgences', w:'Autolyse', f:['autodestructeur','mort','comportement','conduit'], d:"Comportement autodestructeur conduisant à la mort."},
+{c:'urgences', w:'Craving', f:['envie','irrépressible','addictif','comportement'], d:"Envie irrépressible de réaliser sans cesse un comportement addictif."},
+{c:'urgences', w:'Anorexie mentale', f:['alimentaire','privation','refus','nourriture'], d:"Privation alimentaire stricte et volontaire pouvant mettre en jeu le pronostic vital."},
+{c:'urgences', w:'Boulimie', f:['alimentation','excessive','ingestion','nourriture'], d:"Rapport pathologique à la nourriture : ingestion excessive et répétitive d'aliments."},
+{c:'urgences', w:'Cachexie', f:['maigreur','extrême','affaiblissement','pronostic'], d:"Maigreur extrême avec affaiblissement grave de l'état général, pronostic vital engagé à court terme."},
 ];
 
 const catMap = Object.fromEntries(CATEGORIES.map(c=>[c.id,c]));
@@ -431,7 +458,24 @@ function drawCard(){
       <div class="forbid-label">Mots interdits</div>
       <ul class="forbid-list">${card.f.map(w=>`<li>${w}</li>`).join('')}</ul>
     </div>
+    <button class="def-toggle" id="defToggle" type="button">❓ Je ne connais pas ce mot — voir la définition</button>
+    <div class="def-box" id="defBox" hidden>
+      <div class="def-label">Définition</div>
+      <div class="def-text">${card.d}</div>
+    </div>
   `;
+  const defBtn = document.getElementById('defToggle');
+  const defBox = document.getElementById('defBox');
+  defBtn.addEventListener('click', ()=>{
+    const hidden = defBox.hasAttribute('hidden');
+    if(hidden){
+      defBox.removeAttribute('hidden');
+      defBtn.textContent = '🙈 Masquer la définition';
+    } else {
+      defBox.setAttribute('hidden','');
+      defBtn.textContent = '❓ Je ne connais pas ce mot — voir la définition';
+    }
+  });
 }
 
 function setScore(v){
@@ -496,3 +540,50 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
+{
+  "name": "Taboo — Lexique psychiatrique",
+  "short_name": "Taboo Psy",
+  "description": "Jeu Taboo pour apprendre le vocabulaire psychiatrique clinique",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#E9EEEC",
+  "theme_color": "#2C4A52",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
+
+const CACHE_NAME = "taboo-psy-v1";
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png"
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cached) => cached || fetch(event.request))
+  );
+});
