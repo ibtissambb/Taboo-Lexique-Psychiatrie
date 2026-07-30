@@ -1,12 +1,12 @@
 {
-  "name": "Taboo — Lexique psychiatrique",
-  "short_name": "Taboo Psy",
-  "description": "Jeu Taboo pour apprendre le vocabulaire psychiatrique clinique",
+  "name": "Sémio'Défi",
+  "short_name": "Sémio'Défi",
+  "description": "Jeu de vocabulaire pour réviser la sémiologie psychiatrique en s'amusant, contre la montre. Conçu par BELAHDA Ibtissam & PIED Audrey.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#E9EEEC",
-  "theme_color": "#2C4A52",
+  "background_color": "#F2F0E6",
+  "theme_color": "#6B7A45",
   "orientation": "portrait-primary",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
