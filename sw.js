@@ -1,4 +1,4 @@
-const CACHE_NAME = "taboo-psy-v1";
+const CACHE_NAME = "semio-defi-v7";
 const ASSETS = [
   "./",
   "./index.html",
@@ -23,8 +23,17 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// Network-first: always try to fetch the latest version online.
+// Falls back to the cached copy only if the network is unavailable
+// (offline use), and refreshes the cache with whatever it gets online.
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
