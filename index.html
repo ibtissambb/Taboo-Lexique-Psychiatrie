@@ -2,151 +2,165 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Taboo — Lexique psychiatrique</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sémio'Défi — Jeu de vocabulaire psychiatrique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2C4A52">
+<meta name="theme-color" content="#6B7A45">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Taboo Psy">
+<meta name="apple-mobile-web-app-title" content="Sémio'Défi">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1E2A32;
-    --paper:#E9EEEC;
-    --paper-card:#FBFAF7;
-    --primary:#2C4A52;
-    --primary-light:#3E6772;
-    --accent:#C9484B;
-    --accent2:#E0A730;
-    --line: rgba(30,42,50,.14);
+    --ink:#33362A;
+    --paper:#F2F0E6;
+    --card-paper:#FBFAF4;
+    --primary:#6B7A45;
+    --primary-light:#8B9A63;
+    --accent:#8C4A42;
+    --accent2:#C99A4A;
+    --line: rgba(51,54,42,.14);
+    --muted:#74795E;
     --radius: 14px;
   }
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   body{
     margin:0;
     background:
-      radial-gradient(circle at 15% 8%, rgba(44,74,82,.06), transparent 45%),
-      radial-gradient(circle at 90% 90%, rgba(201,72,75,.05), transparent 40%),
+      radial-gradient(circle at 12% 6%, rgba(107,122,69,.08), transparent 45%),
+      radial-gradient(circle at 92% 92%, rgba(140,74,66,.05), transparent 40%),
       var(--paper);
     font-family:'IBM Plex Sans', sans-serif;
     color:var(--ink);
     min-height:100vh;
-    padding: 28px 18px 60px;
+    padding: 22px 16px 50px;
   }
-  .wrap{max-width:880px; margin:0 auto;}
+  .wrap{max-width:480px; margin:0 auto;}
 
-  header{ text-align:center; margin-bottom:26px; }
-  .eyebrow{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    letter-spacing:.16em;
-    text-transform:uppercase;
-    color:var(--primary-light);
-    margin-bottom:6px;
-  }
+  /* ---------- Header ---------- */
+  header{ text-align:center; margin-bottom:18px; display:flex; flex-direction:column; align-items:center; }
+  .logo-mark{ width:52px; height:52px; margin-bottom:10px; }
   h1{
     font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size:clamp(28px, 5vw, 42px);
-    margin:0 0 6px;
+    font-weight:700;
+    font-size:clamp(28px, 7vw, 36px);
+    margin:0 0 4px;
     color:var(--primary);
+    letter-spacing:-.01em;
   }
-  .sub{ color:#5b6b71; font-size:14.5px; max-width:520px; margin:0 auto; }
+  .sub{ color:var(--muted); font-size:13.5px; max-width:380px; margin:0 auto; line-height:1.45; }
 
-  /* Category chips */
-  .cats{
-    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
-    margin: 22px 0 26px;
+  /* ---------- Action row (TOP) ---------- */
+  .action-row{
+    display:flex; gap:8px; margin:20px 0 14px;
   }
-  .cat-chip{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11.5px;
-    padding:7px 13px;
-    border-radius:999px;
-    border:1.5px solid var(--line);
-    background:#fff;
-    cursor:pointer;
-    display:flex; align-items:center; gap:7px;
-    transition:.15s;
-    color:var(--ink);
+  .action-row button{
+    font-family:'IBM Plex Sans', sans-serif; font-weight:700; font-size:14px;
+    border:none; border-radius:12px; padding:15px 10px;
+    cursor:pointer; transition:.15s;
+    box-shadow:0 6px 16px -8px rgba(29,43,42,.35);
+    display:flex; align-items:center; justify-content:center; gap:6px;
   }
-  .cat-chip .dot{width:8px;height:8px;border-radius:50%;flex:none;}
-  .cat-chip.active{ border-color:currentColor; color:#fff; }
-  .cat-chip.active .dot{ background:#fff !important; }
-  .cat-chip:hover{ transform:translateY(-1px); }
+  .action-row button:active{ transform:scale(.96); }
+  .btn-draw{ background:var(--primary); color:#fff; flex:1; font-size:15.5px; }
+  .btn-draw:hover{ background:var(--primary-light); }
+  .btn-skip{ background:#fff; color:var(--ink); border:1.5px solid var(--line) !important; flex:0 0 21%; }
+  .btn-found{ background:#3E7C4A; color:#fff; flex:1 1 48%; }
+  .btn-found:hover{ background:#4b9358;}
+  .btn-taboo{ background:var(--accent); color:#fff; flex:0 0 21%; }
+  .btn-taboo:hover{ background:#c44738; }
 
-  /* Score / timer row */
+  /* ---------- HUD ---------- */
   .hud{
-    display:flex; justify-content:center; align-items:center; gap:26px;
-    margin-bottom:22px; flex-wrap:wrap;
+    display:flex; justify-content:center; align-items:center; gap:8px;
+    margin:0 0 20px;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:12px 10px;
   }
-  .hud-item{ text-align:center; }
-  .hud-label{ font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#7a8a90;}
-  .hud-value{ font-family:'Fraunces',serif; font-weight:600; font-size:30px; color:var(--primary);}
-  #timerRing{ position:relative; width:74px; height:74px; }
+  .hud-item{ flex:1; text-align:center; }
+  #timerHudItem{ cursor:pointer; }
+  .hud-label{ font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
+  .hud-value{ font-family:'Fraunces',serif; font-weight:700; font-size:26px; color:var(--primary); line-height:1.2;}
+  .hud-div{ width:1px; align-self:stretch; background:var(--line); }
+  #timerRing{ position:relative; width:56px; height:56px; margin:0 auto; cursor:pointer; }
   #timerRing svg{ transform:rotate(-90deg); }
   #timerVal{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:17px; color:var(--primary);
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; color:var(--primary);
+  }
+  #timerPlay{
+    margin-top:6px;
+    font-size:9px; font-family:'IBM Plex Mono',monospace; color:var(--muted);
+    white-space:nowrap; text-align:center;
   }
 
-  /* Card */
-  .stage{ display:flex; justify-content:center; margin: 10px 0 28px; perspective:1200px;}
+  /* ---------- Card ---------- */
+  .stage{ display:flex; justify-content:center; margin: 26px 0 10px; }
+  .card-holder{ position:relative; width:100%; max-width:400px; }
+  .cat-tab{
+    position:absolute;
+    top:-14px; left:18px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:#fff; font-weight:600;
+    padding:7px 13px 6px;
+    border-radius:7px 7px 3px 3px;
+    transform:rotate(-2deg);
+    box-shadow:0 3px 0 rgba(0,0,0,.1);
+    z-index:2;
+  }
   .card{
-    width:100%; max-width:420px; min-height:430px;
-    background:var(--paper-card);
+    width:100%; min-height:400px;
+    background:var(--card-paper);
     border-radius:var(--radius);
-    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 18px 40px -18px rgba(30,42,50,.35);
+    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 20px 44px -20px rgba(29,43,42,.4);
     position:relative;
-    padding:26px 26px 22px;
+    padding:30px 22px 24px;
     border:1px solid var(--line);
     display:flex; flex-direction:column;
   }
-  .card::before{
-    content:"";
-    position:absolute; top:0; left:26px; right:26px; height:10px;
-    background-image: radial-gradient(circle, var(--paper) 5px, transparent 5.5px);
-    background-size: 22px 22px;
-    background-position: 0 0;
-    background-repeat: repeat-x;
-  }
-  .cat-tab{
-    align-self:flex-start;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
-    padding:5px 11px; border-radius:6px 6px 0 0; color:#fff;
-    margin-top:10px;
-  }
   .card-id{
-    position:absolute; top:14px; right:20px;
-    font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a6b0b3;
+    position:absolute; top:14px; right:18px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a9b3ae;
   }
   .word{
     font-family:'Fraunces',serif; font-weight:700;
-    font-size:clamp(30px, 6vw, 40px);
+    font-size:clamp(28px, 7vw, 36px);
     color:var(--ink);
-    margin:22px 0 18px;
-    line-height:1.05;
+    margin:4px 0 20px;
+    line-height:1.08;
   }
-  .forbid-box{
-    border:1.5px dashed var(--accent);
-    border-radius:10px;
+  .stamp-box{
+    position:relative;
+    border:2px solid var(--accent);
+    border-radius:8px;
     padding:14px 16px;
-    background: repeating-linear-gradient(135deg, rgba(201,72,75,.05) 0 10px, rgba(201,72,75,.02) 10px 20px);
+    background: repeating-linear-gradient(135deg, rgba(140,74,66,.055) 0 9px, rgba(140,74,66,.02) 9px 18px);
     flex:1;
+    overflow:hidden;
   }
-  .forbid-label{
+  .stamp-ghost{
+    position:absolute; right:-14px; top:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:26px; font-weight:700; letter-spacing:.04em;
+    color:var(--accent); opacity:.16;
+    transform:rotate(-14deg);
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  .stamp-label{
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
-    text-transform:uppercase; color:var(--accent); margin-bottom:9px; font-weight:600;
+    text-transform:uppercase; color:var(--accent); margin-bottom:9px; font-weight:700;
   }
-  .forbid-list{ list-style:none; margin:0; padding:0; }
+  .forbid-list{ list-style:none; margin:0; padding:0; position:relative; }
   .forbid-list li{
-    font-size:16.5px; padding:5px 0; border-bottom:1px solid rgba(201,72,75,.15);
-    color:#3a2a2a;
+    font-size:16px; padding:5px 0; border-bottom:1px solid rgba(140,74,66,.18);
+    color:#3a2a28;
   }
   .forbid-list li:last-child{ border-bottom:none; }
 
@@ -158,122 +172,174 @@
     border-radius:10px;
     padding:10px 14px;
     font-family:'IBM Plex Sans', sans-serif;
-    font-size:13px; font-weight:600;
+    font-size:12.5px; font-weight:600;
     color:var(--primary);
     cursor:pointer;
     transition:.15s;
   }
-  .def-toggle:hover{ background:rgba(44,74,82,.06); }
+  .def-toggle:hover{ background:rgba(107,122,69,.08); }
   .def-box{
     margin-top:12px;
     border-radius:10px;
     padding:14px 16px;
-    background: rgba(44,74,82,.05);
+    background: rgba(107,122,69,.08);
     border:1.5px solid var(--primary-light);
   }
   .def-label{
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em;
     text-transform:uppercase; color:var(--primary); margin-bottom:6px; font-weight:600;
   }
-  .def-text{ font-size:15px; color:var(--ink); line-height:1.4; }
+  .def-text{ font-size:14.5px; color:var(--ink); line-height:1.42; }
 
   .placeholder{
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    flex:1; text-align:center; color:#8a9599; gap:10px;
+    flex:1; text-align:center; color:var(--muted); gap:8px;
   }
-  .placeholder .big{ font-family:'Fraunces',serif; font-size:20px; color:var(--primary-light); }
+  .placeholder .big{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--primary-light); }
 
-  /* Controls */
-  .controls{ display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-bottom:10px;}
-  button{
-    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px;
-    border:none; border-radius:10px; padding:12px 18px; cursor:pointer;
-    transition:.15s; display:flex; align-items:center; gap:8px;
+  /* ---------- Category filter (BOTTOM) ---------- */
+  .filter-block{ margin-top:30px; }
+  .filter-help{
+    font-size:12.5px; color:var(--muted); line-height:1.5;
+    background:#fff; border:1.5px solid var(--line); border-radius:12px;
+    padding:12px 14px; margin-bottom:10px;
   }
-  button:active{ transform:scale(.97); }
-  .btn-draw{ background:var(--primary); color:#fff; }
-  .btn-draw:hover{ background:var(--primary-light); }
-  .btn-found{ background:#3E7C4A; color:#fff; }
-  .btn-found:hover{ background:#4b9358;}
-  .btn-skip{ background:#eee; color:var(--ink); }
-  .btn-skip:hover{ background:#e2e2e2; }
-  .btn-taboo{ background:var(--accent); color:#fff; }
-  .btn-taboo:hover{ background:#d95c5f; }
-  .btn-timer{ background:var(--accent2); color:#3a2a05; }
-  .btn-reset{ background:transparent; color:#8a9599; text-decoration:underline; }
+  .filter-help strong{ color:var(--ink); }
+  .filter-toggle{
+    width:100%;
+    display:flex; align-items:center; justify-content:space-between;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:11px;
+    padding:11px 14px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600; font-size:13.5px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .filter-toggle .chev{ transition:transform .2s; color:var(--muted); }
+  .filter-toggle.open .chev{ transform:rotate(180deg); }
+  .filter-panel{
+    max-height:0; overflow:hidden;
+    transition:max-height .25s ease;
+  }
+  .filter-panel.open{ max-height:400px; }
+  .cats{
+    display:flex; flex-wrap:wrap; gap:7px;
+    padding:12px 2px 4px;
+    justify-content:center;
+  }
+  .cat-chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    padding:7px 12px;
+    border-radius:8px;
+    border:1.5px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+    transition:.15s;
+    color:var(--ink);
+  }
+  .cat-chip .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .cat-chip.active{ border-color:currentColor; color:#fff !important; }
+  .cat-chip.active .dot{ background:#fff !important; }
 
-  footer{ text-align:center; margin-top:34px; font-size:12px; color:#9aa5a8; }
+  .reset-link{
+    display:block; text-align:center; margin-top:18px;
+    font-size:12px; color:var(--muted); text-decoration:underline; cursor:pointer;
+    background:none; border:none; font-family:'IBM Plex Sans',sans-serif;
+  }
+
+  footer{ text-align:center; margin-top:26px; font-size:11.5px; color:#9aa5a0; }
+  .byline{ font-weight:600; color:var(--ink); font-size:12.5px; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">Sémiologie psychiatrique · Jeu pédagogique</div>
-    <h1>Taboo — Lexique psychiatrique</h1>
-    <p class="sub">Fais deviner le mot à ton binôme sans jamais prononcer les termes interdits. Choisis une ou plusieurs catégories, tire une carte, lance le chrono.</p>
+    <svg class="logo-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="100" height="100" rx="20" fill="#6B7A45"/>
+      <circle cx="50" cy="50" r="30" fill="none" stroke="#FAF9F1" stroke-width="6"/>
+      <line x1="50" y1="50" x2="50" y2="28" stroke="#FAF9F1" stroke-width="5" stroke-linecap="round"/>
+      <line x1="50" y1="50" x2="66" y2="50" stroke="#FAF9F1" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+    <h1>Sémio'Défi</h1>
+    <p class="sub">Fais deviner le mot à ton binôme sans jamais prononcer les termes interdits.</p>
   </header>
 
-  <div class="cats" id="cats"></div>
+  <div class="action-row" id="actionRow">
+    <button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>
+  </div>
 
   <div class="hud">
     <div class="hud-item">
       <div class="hud-label">Score</div>
       <div class="hud-value" id="scoreVal">0</div>
     </div>
-    <div class="hud-item">
+    <div class="hud-div"></div>
+    <div class="hud-item" id="timerHudItem">
       <div id="timerRing">
-        <svg width="74" height="74">
-          <circle cx="37" cy="37" r="31" fill="none" stroke="#dfe4e2" stroke-width="6"/>
-          <circle id="ringProgress" cx="37" cy="37" r="31" fill="none" stroke="var(--accent2)" stroke-width="6"
-            stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="0"/>
+        <svg width="56" height="56">
+          <circle cx="28" cy="28" r="23" fill="none" stroke="#e1e0d3" stroke-width="5"/>
+          <circle id="ringProgress" cx="28" cy="28" r="23" fill="none" stroke="var(--accent2)" stroke-width="5"
+            stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="0"/>
         </svg>
         <div id="timerVal">60</div>
       </div>
+      <div id="timerPlay">appuyer ▸</div>
     </div>
+    <div class="hud-div"></div>
     <div class="hud-item">
-      <div class="hud-label">Cartes restantes</div>
+      <div class="hud-label">Restantes</div>
       <div class="hud-value" id="remainVal">0</div>
     </div>
   </div>
 
   <div class="stage">
-    <div class="card" id="card">
-      <span class="card-id" id="cardId"></span>
+    <div class="card-holder">
       <div class="cat-tab" id="catTab" style="visibility:hidden;">catégorie</div>
-      <div id="cardBody" class="placeholder">
-        <div class="big">Prêt(e) ?</div>
-        <div>Choisis une catégorie puis tire ta première carte.</div>
+      <div class="card" id="card">
+        <span class="card-id" id="cardId"></span>
+        <div id="cardBody" class="placeholder">
+          <div class="big">Prêt·e ?</div>
+          <div>Tire ta première carte pour commencer.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="controls">
-    <button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>
-    <button class="btn-found" id="foundBtn">✅ Trouvé</button>
-    <button class="btn-skip" id="skipBtn">⏭️ Passé</button>
-    <button class="btn-taboo" id="tabooBtn">🚫 Mot interdit</button>
-  </div>
-  <div class="controls">
-    <button class="btn-timer" id="timerBtn">▶️ Démarrer 60s</button>
-    <button class="btn-reset" id="resetBtn">réinitialiser la partie</button>
+  <div class="filter-block">
+    <div class="filter-help">
+      <strong>À quoi servent les catégories ?</strong> Par défaut, les 95 cartes de toutes les catégories sont mélangées. Tu peux désactiver certains thèmes ci-dessous pour faire une manche ciblée — par exemple ne réviser que « Langage & discours » avant un cours, ou retirer une catégorie déjà bien maîtrisée par le groupe.
+    </div>
+    <button class="filter-toggle" id="filterToggle">
+      <span id="filterSummary">🗂️ Catégories — 10 / 10 actives</span>
+      <span class="chev">▾</span>
+    </button>
+    <div class="filter-panel" id="filterPanel">
+      <div class="cats" id="cats"></div>
+    </div>
   </div>
 
-  <footer>Vocabulaire de sémiologie psychiatrique — ressource pédagogique originale.</footer>
+  <button class="reset-link" id="resetBtn">réinitialiser la partie</button>
+
+  <footer><span class="byline">Un jeu conçu par BELAHDA Ibtissam &amp; PIED Audrey</span><br>Vocabulaire de sémiologie psychiatrique — ressource pédagogique originale.</footer>
 </div>
 
 <script>
 const CATEGORIES = [
   {id:'emotions', label:'Émotions & affects', color:'#3E7C7C'},
   {id:'langage', label:'Langage & discours', color:'#6C4F8C'},
-  {id:'pensee', label:'Pensée & idées délirantes', color:'#B0413E'},
+  {id:'pensee', label:'Pensée & idées délirantes', color:'#A83E38'},
   {id:'perceptions', label:'Perceptions', color:'#35507A'},
-  {id:'moteur', label:'Comportement moteur', color:'#C9762B'},
+  {id:'moteur', label:'Comportement moteur', color:'#C07A2E'},
   {id:'cognition', label:'Conscience & cognition', color:'#46607A'},
   {id:'comportement', label:'Comportement & personnalité', color:'#4C7A4C'},
   {id:'anxiete', label:'Anxiété & phobies', color:'#B8971F'},
-  {id:'humeur', label:'Troubles de l\'humeur', color:'#B85C8A'},
-  {id:'urgences', label:'Urgences & addictions', color:'#8C2F2F'},
+  {id:'humeur', label:"Troubles de l'humeur", color:'#B85C8A'},
+  {id:'urgences', label:'Urgences & addictions', color:'#6E2749'},
 ];
 
 const DECK = [
@@ -387,10 +453,29 @@ const DECK = [
 {c:'urgences', w:'Crise clastique', f:['violence','objets','brise','contrôle'], d:"Décharge de violence soudaine, avec destruction d'objets environnants."},
 {c:'urgences', w:'Délirium Tremens', f:['sevrage','alcool','complication','mental'], d:"Complication grave et aiguë du sevrage alcoolique, engageant le pronostic vital."},
 {c:'urgences', w:'Autolyse', f:['autodestructeur','mort','comportement','conduit'], d:"Comportement visant à se donner volontairement la mort."},
-{c:'urgences', w:'Craving', f:['envie','irrépressible','addictif','comportement'], d:"Besoin impérieux et difficilement contrôlable de consommer une substance."},
+{c:'urgences', w:'Craving', f:['envie','irrépressible','addictif','comportement'], d:"Besoin impérieux et difficilement contrôlable de consommer une substance ou de réaliser un comportement."},
 {c:'urgences', w:'Anorexie mentale', f:['alimentaire','privation','refus','nourriture'], d:"Restriction alimentaire volontaire et sévère, pouvant menacer la vie."},
-{c:'urgences', w:'Boulimie', f:['alimentation','excessive','ingestion','nourriture'], d:"Épisodes répétés de prise alimentaire massive et incontrôlée."},
+{c:'urgences', w:'Boulimie', f:['alimentation','excessive','ingestion','nourriture'], d:"Épisodes répétés de prise alimentaire massive, rapide et incontrôlée, accompagnés de comportements compensatoires."},
 {c:'urgences', w:'Cachexie', f:['maigreur','extrême','affaiblissement','pronostic'], d:"Amaigrissement extrême avec altération sévère de l'état général."},
+{c:'urgences', w:'Abstinence', f:['produit','privation','durable','choix'], d:"Renoncement volontaire et durable à une consommation ou un comportement, idéalement choisi par la personne elle-même."},
+{c:'urgences', w:'Abstention', f:['ponctuel','consommation','moment','durée'], d:"Non-consommation à un moment donné, sans engagement dans la durée, à la différence de l'abstinence."},
+{c:'urgences', w:'Accoutumance', f:['besoin','quantité','substance','initiaux'], d:"Besoin d'augmenter la quantité de la substance pour retrouver les effets initiaux."},
+{c:'urgences', w:'Tolérance', f:['dose','effet','substance','quantité'], d:"Diminution de l'effet d'une substance à dose égale, nécessitant une augmentation progressive des quantités."},
+{c:'urgences', w:'Addiction', f:['comportement','malaise','conséquences','conscience'], d:"Comportement répété malgré la conscience de ses conséquences négatives, employé pour atténuer un malaise."},
+{c:'urgences', w:'Conduites et pratiques addictives', f:['consommation','risque','substance','comportement'], d:"Ensemble des comportements de consommation de substances, incluant les usages à risque et la dépendance installée."},
+{c:'urgences', w:"Personne avec un trouble de l'usage d'alcool", f:['chronique','excessive','dépendance','consommation'], d:"Personne qui souffre d'une maladie chronique caractérisée par une consommation excessive, répétée et incontrôlée d'alcool, et/ou d'une dépendance physique et psychologique."},
+{c:'urgences', w:'Binge drinking', f:['alcool','rapide','ivresse','jeunes'], d:"Consommation d'un maximum d'alcool en un minimum de temps, dans un but d'ivresse rapide et massive."},
+{c:'urgences', w:'Cure', f:['séjour','établissement','produit','distance'], d:"Terme ancien désignant un séjour en établissement spécialisé visant une mise à distance d'un produit."},
+{c:'urgences', w:'Dépendance', f:['critères','substance','diagnostic','sevrage'], d:"État clinique défini par des critères diagnostiques officiels, traduisant une tolérance et des symptômes de sevrage."},
+{c:'urgences', w:'Dépistage', f:['test','maladie','précoce','examen'], d:"Recherche précoce, à l'aide de tests ou d'examens, d'une maladie ou d'une anomalie passée inaperçue."},
+{c:'urgences', w:'Substance psychoactive', f:['cerveau','perception','humeur','fonctions'], d:"Terme courant désignant une substance qui agit sur le cerveau en modifiant certaines de ses fonctions (perception, sensation, humeur, conscience, comportement ou autre)."},
+{c:'urgences', w:'Postcure', f:['séjour','consolidation','établissement','soins'], d:"Période de soins prolongée faisant suite à un premier séjour thérapeutique, destinée à consolider les objectifs atteints."},
+{c:'urgences', w:'Prévention', f:['risque','santé','action','population'], d:"Ensemble d'actions visant à réduire l'apparition, l'aggravation ou les conséquences d'un problème de santé."},
+{c:'urgences', w:'Traitement agoniste opioïde', f:['traitement','méthadone','substitution','héroïne'], d:"Méthode médicale qui remplace la consommation d'opioïdes par des médicaments prescrits et contrôlés, dans un objectif de réduction des risques et des dommages."},
+{c:'urgences', w:'Rechute', f:['retour','maladie','apprentissage','rémission'], d:"Reprise évolutive d'un trouble après une période de rémission, caractérisée par la perte de contrôle de la consommation ou du comportement."},
+{c:'urgences', w:'Réduction des risques et des dommages', f:['consommation','limiter','conséquences','sécurité'], d:"Approche de santé publique visant à limiter les risques et les conséquences d'une consommation, sans nécessairement viser son arrêt."},
+{c:'urgences', w:'Sevrage', f:['produit','symptômes','arrêt','manque'], d:"Mise à distance d'un produit, pouvant s'accompagner d'un syndrome physique ou psychique de manque à l'arrêt ou à la diminution de la consommation."},
+{c:'urgences', w:'Vape', f:['cigarette','électronique','fumée','nicotine'], d:"Dispositif électronique produisant une vapeur inhalée, utilisé comme moyen de réduction des risques à la cigarette traditionnelle."},
 ];
 
 const catMap = Object.fromEntries(CATEGORIES.map(c=>[c.id,c]));
@@ -400,10 +485,11 @@ let score = 0;
 let timerInterval = null;
 let timeLeft = 60;
 const TOTAL_TIME = 60;
+const RING_CIRC = 144.5;
+let hasCardShown = false;
 
 function refillPool(){
   pool = DECK.filter(d => activeCats.has(d.c));
-  // shuffle
   for(let i=pool.length-1;i>0;i--){
     const j = Math.floor(Math.random()*(i+1));
     [pool[i],pool[j]]=[pool[j],pool[i]];
@@ -415,15 +501,26 @@ function updateRemain(){
   document.getElementById('remainVal').textContent = pool.length;
 }
 
+function updateFilterSummary(){
+  document.getElementById('filterSummary').textContent =
+    `🗂️ Catégories — ${activeCats.size} / ${CATEGORIES.length} actives`;
+}
+
 function renderCats(){
   const el = document.getElementById('cats');
   el.innerHTML='';
   CATEGORIES.forEach(cat=>{
     const chip = document.createElement('div');
-    chip.className = 'cat-chip active';
-    chip.style.color = cat.color;
-    chip.style.background = cat.color;
-    chip.innerHTML = `<span class="dot"></span>${cat.label}`;
+    const isActive = activeCats.has(cat.id);
+    chip.className = isActive ? 'cat-chip active' : 'cat-chip';
+    chip.innerHTML = `<span class="dot" style="${isActive ? '' : `background:${cat.color}`}"></span>${cat.label}`;
+    if(isActive){
+      chip.style.background = cat.color;
+      chip.style.color = '';
+    } else {
+      chip.style.background = '#fff';
+      chip.style.color = cat.color;
+    }
     chip.addEventListener('click', ()=>{
       if(activeCats.has(cat.id)){
         if(activeCats.size>1) activeCats.delete(cat.id);
@@ -432,13 +529,29 @@ function renderCats(){
       }
       renderCats();
       refillPool();
+      updateFilterSummary();
     });
-    if(!activeCats.has(cat.id)){
-      chip.classList.remove('active');
-      chip.style.background = '#fff';
-    }
     el.appendChild(chip);
   });
+}
+
+document.getElementById('filterToggle').addEventListener('click', (e)=>{
+  const btn = e.currentTarget;
+  const panel = document.getElementById('filterPanel');
+  btn.classList.toggle('open');
+  panel.classList.toggle('open');
+});
+
+function showResponseButtons(){
+  const row = document.getElementById('actionRow');
+  row.innerHTML = `
+    <button class="btn-skip" id="skipBtn">⏭️</button>
+    <button class="btn-found" id="foundBtn">✅ Trouvé</button>
+    <button class="btn-taboo" id="tabooBtn">🚫</button>
+  `;
+  document.getElementById('foundBtn').addEventListener('click', ()=>{ setScore(score+1); drawCard(); });
+  document.getElementById('skipBtn').addEventListener('click', drawCard);
+  document.getElementById('tabooBtn').addEventListener('click', ()=>{ setScore(score-1); drawCard(); });
 }
 
 function drawCard(){
@@ -454,8 +567,9 @@ function drawCard(){
   document.getElementById('cardId').textContent = '#'+(DECK.indexOf(card)+1).toString().padStart(2,'0');
   document.getElementById('cardBody').innerHTML = `
     <div class="word">${card.w}</div>
-    <div class="forbid-box">
-      <div class="forbid-label">Mots interdits</div>
+    <div class="stamp-box">
+      <div class="stamp-ghost">INTERDIT</div>
+      <div class="stamp-label">Mots interdits</div>
       <ul class="forbid-list">${card.f.map(w=>`<li>${w}</li>`).join('')}</ul>
     </div>
     <button class="def-toggle" id="defToggle" type="button">❓ Je ne connais pas ce mot — voir la définition</button>
@@ -476,6 +590,14 @@ function drawCard(){
       defBtn.textContent = '❓ Je ne connais pas ce mot — voir la définition';
     }
   });
+
+  if(!hasCardShown){
+    hasCardShown = true;
+    showResponseButtons();
+  }
+  if(!timerInterval){
+    startTimer();
+  }
 }
 
 function setScore(v){
@@ -486,51 +608,58 @@ function setScore(v){
 function resetTimerDisplay(){
   timeLeft = TOTAL_TIME;
   document.getElementById('timerVal').textContent = timeLeft;
-  const ring = document.getElementById('ringProgress');
-  ring.style.strokeDashoffset = 0;
-  document.getElementById('timerBtn').textContent = '▶️ Démarrer 60s';
+  document.getElementById('ringProgress').style.strokeDashoffset = 0;
+  document.getElementById('timerPlay').textContent = 'appuyer ▸';
 }
 
 function startTimer(){
-  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; resetTimerDisplay(); return; }
+  if(timerInterval){ return; }
   timeLeft = TOTAL_TIME;
-  document.getElementById('timerBtn').textContent = '⏸️ Arrêter';
-  const circumference = 194.8;
+  document.getElementById('timerPlay').textContent = 'en cours';
   timerInterval = setInterval(()=>{
     timeLeft--;
     document.getElementById('timerVal').textContent = Math.max(timeLeft,0);
-    const ring = document.getElementById('ringProgress');
-    ring.style.strokeDashoffset = circumference * (1 - timeLeft/TOTAL_TIME);
+    document.getElementById('ringProgress').style.strokeDashoffset = RING_CIRC * (1 - timeLeft/TOTAL_TIME);
     if(timeLeft<=0){
       clearInterval(timerInterval);
       timerInterval=null;
       document.getElementById('timerVal').textContent = "⏰";
-      document.getElementById('timerBtn').textContent = '▶️ Démarrer 60s';
+      document.getElementById('timerPlay').textContent = 'terminé';
     }
   },1000);
 }
 
+function stopTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+  resetTimerDisplay();
+}
+
+document.getElementById('timerHudItem').addEventListener('click', ()=>{
+  if(timerInterval){ stopTimer(); } else { startTimer(); }
+});
+
 document.getElementById('drawBtn').addEventListener('click', drawCard);
-document.getElementById('foundBtn').addEventListener('click', ()=>{ setScore(score+1); drawCard(); });
-document.getElementById('skipBtn').addEventListener('click', drawCard);
-document.getElementById('tabooBtn').addEventListener('click', ()=>{ setScore(score-1); drawCard(); });
-document.getElementById('timerBtn').addEventListener('click', startTimer);
+
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   setScore(0);
-  if(timerInterval){clearInterval(timerInterval); timerInterval=null;}
-  resetTimerDisplay();
+  stopTimer();
+  hasCardShown = false;
   activeCats = new Set(CATEGORIES.map(c=>c.id));
   renderCats();
+  updateFilterSummary();
   refillPool();
   document.getElementById('cardId').textContent='';
   document.getElementById('catTab').style.visibility='hidden';
-  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt(e) ?</div><div>Choisis une catégorie puis tire ta première carte.</div></div>`;
+  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt·e ?</div><div>Tire ta première carte pour commencer.</div></div>`;
+  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>`;
+  document.getElementById('drawBtn').addEventListener('click', drawCard);
 });
 
 renderCats();
 refillPool();
 setScore(0);
 resetTimerDisplay();
+updateFilterSummary();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -542,14 +671,14 @@ if ('serviceWorker' in navigator) {
 </html>
 
 {
-  "name": "Taboo — Lexique psychiatrique",
-  "short_name": "Taboo Psy",
-  "description": "Jeu Taboo pour apprendre le vocabulaire psychiatrique clinique",
+  "name": "Sémio'Défi",
+  "short_name": "Sémio'Défi",
+  "description": "Jeu de vocabulaire pour réviser la sémiologie psychiatrique en s'amusant, contre la montre. Conçu par BELAHDA Ibtissam & PIED Audrey.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#E9EEEC",
-  "theme_color": "#2C4A52",
+  "background_color": "#F2F0E6",
+  "theme_color": "#6B7A45",
   "orientation": "portrait-primary",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
@@ -557,7 +686,7 @@ if ('serviceWorker' in navigator) {
   ]
 }
 
-const CACHE_NAME = "taboo-psy-v2";
+const CACHE_NAME = "semio-defi-v7";
 const ASSETS = [
   "./",
   "./index.html",
