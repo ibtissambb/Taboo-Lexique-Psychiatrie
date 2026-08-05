@@ -53,7 +53,47 @@
   }
   .sub{ color:var(--muted); font-size:13.5px; max-width:380px; margin:0 auto; line-height:1.45; }
 
-  /* ---------- Action row (TOP) ---------- */
+  /* ---------- Mode switch (duo / solo) ---------- */
+  .mode-switch{
+    display:flex; gap:6px; justify-content:center;
+    margin:16px 0 4px;
+    background:#fff; border:1.5px solid var(--line); border-radius:11px;
+    padding:5px;
+  }
+  .mode-btn{
+    flex:1; border:none; background:none; cursor:pointer;
+    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:13px;
+    padding:9px 10px; border-radius:8px; color:var(--muted);
+    transition:.15s;
+  }
+  .mode-btn.active{ background:var(--primary); color:#fff; }
+
+  .diff-switch{
+    display:flex; gap:6px; justify-content:center;
+    margin:10px 0 4px;
+    background:#fff; border:1.5px solid var(--line); border-radius:11px;
+    padding:5px;
+  }
+  .diff-switch[hidden]{ display:none; }
+  .diff-btn{
+    flex:1; border:1.5px solid transparent; background:none; cursor:pointer;
+    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:12.5px;
+    padding:8px 8px; border-radius:8px; color:var(--muted);
+    transition:.15s;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .diff-btn .dot{ width:8px; height:8px; border-radius:50%; flex:none; background:currentColor; opacity:.55; }
+  .diff-btn:hover:not(.active){ background:rgba(0,0,0,.03); }
+  .diff-btn[data-diff="facile"]{ color:#3E7C4A; }
+  .diff-btn[data-diff="moyen"]{ color:#B8971F; }
+  .diff-btn[data-diff="difficile"]{ color:var(--accent); }
+  .diff-btn.active{ border-color:currentColor; }
+  .diff-btn.active .dot{ opacity:1; }
+  .diff-btn[data-diff="facile"].active{ background:rgba(62,124,74,.1); }
+  .diff-btn[data-diff="moyen"].active{ background:rgba(184,151,31,.1); }
+  .diff-btn[data-diff="difficile"].active{ background:rgba(140,74,66,.1); }
+
+
   .action-row{
     display:flex; gap:8px; margin:20px 0 14px;
   }
@@ -197,6 +237,33 @@
   }
   .placeholder .big{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--primary-light); }
 
+  /* ---------- Quiz (solo mode) ---------- */
+  .quiz-label{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--primary); font-weight:700; margin-bottom:8px;
+  }
+  .quiz-def{
+    font-size:17px; line-height:1.45; color:var(--ink); margin-bottom:20px;
+  }
+  .quiz-choices{
+    display:grid; grid-template-columns:1fr 1fr; gap:9px;
+  }
+  .quiz-choice{
+    font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:14px;
+    padding:13px 10px; border-radius:10px; border:1.5px solid var(--line);
+    background:#fff; color:var(--ink); cursor:pointer; transition:.15s;
+    text-align:center;
+  }
+  .quiz-choice:hover:not(:disabled){ border-color:var(--primary-light); background:rgba(107,122,69,.06); }
+  .quiz-choice:disabled{ cursor:default; }
+  .quiz-choice.correct{ background:#3E7C4A; border-color:#3E7C4A; color:#fff; }
+  .quiz-choice.wrong{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .quiz-feedback{
+    margin-top:16px; font-size:14px; font-weight:600; text-align:center; line-height:1.4;
+  }
+  .quiz-feedback.good{ color:#3E7C4A; }
+  .quiz-feedback.bad{ color:var(--accent); }
+
   /* ---------- Category filter (BOTTOM) ---------- */
   .filter-block{ margin-top:30px; }
   .filter-help{
@@ -266,8 +333,19 @@
       <line x1="50" y1="50" x2="66" y2="50" stroke="#FAF9F1" stroke-width="5" stroke-linecap="round"/>
     </svg>
     <h1>Sémio'Défi</h1>
-    <p class="sub">Fais deviner le mot à ton binôme sans jamais prononcer les termes interdits.</p>
+    <p class="sub" id="subText">Fais deviner le mot à ton binôme sans jamais prononcer les termes interdits.</p>
   </header>
+
+  <div class="mode-switch" id="modeSwitch">
+    <button class="mode-btn active" data-mode="duo" type="button">👥 Duo</button>
+    <button class="mode-btn" data-mode="solo" type="button">👤 Solo</button>
+  </div>
+
+  <div class="diff-switch" id="diffSwitch" hidden>
+    <button class="diff-btn" data-diff="facile" type="button"><span class="dot"></span>Facile</button>
+    <button class="diff-btn active" data-diff="moyen" type="button"><span class="dot"></span>Moyen</button>
+    <button class="diff-btn" data-diff="difficile" type="button"><span class="dot"></span>Difficile</button>
+  </div>
 
   <div class="action-row" id="actionRow">
     <button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>
@@ -275,7 +353,7 @@
 
   <div class="hud">
     <div class="hud-item">
-      <div class="hud-label">Score</div>
+      <div class="hud-label" id="scoreLabel">Score</div>
       <div class="hud-value" id="scoreVal">0</div>
     </div>
     <div class="hud-div"></div>
@@ -312,7 +390,7 @@
 
   <div class="filter-block">
     <div class="filter-help">
-      <strong>À quoi servent les catégories ?</strong> Par défaut, les 95 cartes de toutes les catégories sont mélangées. Tu peux désactiver certains thèmes ci-dessous pour faire une manche ciblée — par exemple ne réviser que « Langage & discours » avant un cours, ou retirer une catégorie déjà bien maîtrisée par le groupe.
+      <strong>À quoi servent les catégories ?</strong> Par défaut, les 114 cartes de toutes les catégories sont mélangées. Tu peux désactiver certains thèmes ci-dessous pour faire une manche ciblée — par exemple ne réviser que « Langage & discours » avant un cours, ou retirer une catégorie déjà bien maîtrisée par le groupe.
     </div>
     <button class="filter-toggle" id="filterToggle">
       <span id="filterSummary">🗂️ Catégories — 10 / 10 actives</span>
@@ -465,7 +543,7 @@ const DECK = [
 {c:'urgences', w:'Conduites et pratiques addictives', f:['consommation','risque','substance','comportement'], d:"Ensemble des comportements de consommation de substances, incluant les usages à risque et la dépendance installée."},
 {c:'urgences', w:"Personne avec un trouble de l'usage d'alcool", f:['chronique','excessive','dépendance','consommation'], d:"Personne qui souffre d'une maladie chronique caractérisée par une consommation excessive, répétée et incontrôlée d'alcool, et/ou d'une dépendance physique et psychologique."},
 {c:'urgences', w:'Binge drinking', f:['alcool','rapide','ivresse','jeunes'], d:"Consommation d'un maximum d'alcool en un minimum de temps, dans un but d'ivresse rapide et massive."},
-{c:'urgences', w:'Cure', f:['séjour','établissement','produit','distance'], d:"Terme ancien désignant un séjour en établissement spécialisé visant une mise à distance d'un produit."},
+{c:'urgences', w:'Cure', f:['séjour','établissement','produit','distance'], d:"Séjour en établissement spécialisé visant une mise à distance d'un produit, sans garantir à lui seul une guérison définitive."},
 {c:'urgences', w:'Dépendance', f:['critères','substance','diagnostic','sevrage'], d:"État clinique défini par des critères diagnostiques officiels, traduisant une tolérance et des symptômes de sevrage."},
 {c:'urgences', w:'Dépistage', f:['test','maladie','précoce','examen'], d:"Recherche précoce, à l'aide de tests ou d'examens, d'une maladie ou d'une anomalie passée inaperçue."},
 {c:'urgences', w:'Substance psychoactive', f:['cerveau','perception','humeur','fonctions'], d:"Terme courant désignant une substance qui agit sur le cerveau en modifiant certaines de ses fonctions (perception, sensation, humeur, conscience, comportement ou autre)."},
@@ -487,6 +565,48 @@ let timeLeft = 60;
 const TOTAL_TIME = 60;
 const RING_CIRC = 144.5;
 let hasCardShown = false;
+let mode = 'duo';
+const MODE_TEXT = {
+  duo: {
+    sub: "Fais deviner le mot à ton binôme sans jamais prononcer les termes interdits.",
+    scoreLabel: "Score",
+  },
+  solo: {
+    sub: "Lis la définition et devine le bon mot parmi les propositions.",
+    scoreLabel: "Bonnes réponses",
+  },
+};
+
+function setMode(m){
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.mode === m);
+  });
+  document.getElementById('subText').textContent = MODE_TEXT[m].sub;
+  document.getElementById('scoreLabel').textContent = MODE_TEXT[m].scoreLabel;
+  setScore(0);
+  quizStreak = 0;
+  hasCardShown = false;
+  document.getElementById('cardId').textContent = '';
+  document.getElementById('catTab').style.visibility = 'hidden';
+  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt·e ?</div><div>${m==='solo' ? 'Lance ta première question.' : 'Tire ta première carte pour commencer.'}</div></div>`;
+  document.getElementById('diffSwitch').hidden = (m !== 'solo');
+  document.getElementById('actionRow').innerHTML = m==='solo'
+    ? `<button class="btn-draw" id="drawBtn">🎮 Commencer le quiz</button>`
+    : `<button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>`;
+  document.getElementById('drawBtn').addEventListener('click', handleDraw);
+}
+
+function handleDraw(){
+  if(mode === 'solo') drawQuiz(); else drawCard();
+}
+
+document.getElementById('modeSwitch').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.mode-btn');
+  if(!btn) return;
+  setMode(btn.dataset.mode);
+});
+
 
 function refillPool(){
   pool = DECK.filter(d => activeCats.has(d.c));
@@ -553,6 +673,119 @@ function showResponseButtons(){
   document.getElementById('skipBtn').addEventListener('click', drawCard);
   document.getElementById('tabooBtn').addEventListener('click', ()=>{ setScore(score-1); drawCard(); });
 }
+
+let quizStreak = 0;
+let quizBest = 0;
+try { quizBest = parseInt(localStorage.getItem('semioDefiBestStreak') || '0', 10) || 0; } catch(e) {}
+
+let difficulty = 'moyen';
+const DIFF_CONFIG = {
+  facile:    { choices: 2, distractorMode: 'diff' },
+  moyen:     { choices: 4, distractorMode: 'mix'  },
+  difficile: { choices: 6, distractorMode: 'same' },
+};
+
+document.getElementById('diffSwitch').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.diff-btn');
+  if(!btn) return;
+  difficulty = btn.dataset.diff;
+  document.querySelectorAll('.diff-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.diff === difficulty);
+  });
+});
+
+function shuffleArr(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function pickDistractors(correctCard, count){
+  const cfg = DIFF_CONFIG[difficulty];
+  let primaryPool;
+  if(cfg.distractorMode === 'diff'){
+    primaryPool = DECK.filter(d => d.w !== correctCard.w && d.c !== correctCard.c);
+  } else if(cfg.distractorMode === 'same'){
+    primaryPool = DECK.filter(d => d.w !== correctCard.w && d.c === correctCard.c);
+  } else {
+    primaryPool = DECK.filter(d => d.w !== correctCard.w);
+  }
+  shuffleArr(primaryPool);
+  let chosen = primaryPool.slice(0, count);
+  if(chosen.length < count){
+    const used = new Set(chosen.map(c=>c.w).concat([correctCard.w]));
+    const fallback = shuffleArr(DECK.filter(d => !used.has(d.w)));
+    chosen = chosen.concat(fallback.slice(0, count - chosen.length));
+  }
+  return chosen;
+}
+
+
+function drawQuiz(){
+  if(pool.length===0) refillPool();
+  if(pool.length===0) return;
+  const card = pool.pop();
+  updateRemain();
+  const cat = catMap[card.c];
+  const tab = document.getElementById('catTab');
+  tab.textContent = cat.label;
+  tab.style.background = cat.color;
+  tab.style.visibility = 'visible';
+  document.getElementById('cardId').textContent = '#'+(DECK.indexOf(card)+1).toString().padStart(2,'0');
+
+  const distractors = pickDistractors(card, DIFF_CONFIG[difficulty].choices - 1);
+  const choices = [card, ...distractors];
+  for(let i=choices.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [choices[i],choices[j]] = [choices[j],choices[i]];
+  }
+
+  document.getElementById('cardBody').innerHTML = `
+    <div class="quiz-label">Définition</div>
+    <div class="quiz-def">${card.d}</div>
+    <div class="quiz-choices" id="quizChoices">
+      ${choices.map(c => `<button class="quiz-choice" type="button" data-word="${c.w.replace(/"/g,'&quot;')}">${c.w}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+  `;
+
+  document.querySelectorAll('.quiz-choice').forEach(btn=>{
+    btn.addEventListener('click', ()=> handleQuizAnswer(btn, card.w));
+  });
+
+  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">⏭️ Passer cette question</button>`;
+  document.getElementById('drawBtn').addEventListener('click', drawQuiz);
+
+  if(!timerInterval){ startTimer(); }
+}
+
+function handleQuizAnswer(btn, correctWord){
+  const allBtns = document.querySelectorAll('.quiz-choice');
+  allBtns.forEach(b=>{ b.disabled = true; });
+  const feedback = document.getElementById('quizFeedback');
+  if(btn.dataset.word === correctWord){
+    btn.classList.add('correct');
+    setScore(score+1);
+    quizStreak++;
+    if(quizStreak > quizBest){
+      quizBest = quizStreak;
+      try { localStorage.setItem('semioDefiBestStreak', String(quizBest)); } catch(e) {}
+    }
+    feedback.className = 'quiz-feedback good';
+    feedback.innerHTML = `✅ Bravo ! Série en cours : ${quizStreak} 🔥 (record : ${quizBest})`;
+  } else {
+    btn.classList.add('wrong');
+    allBtns.forEach(b=>{ if(b.dataset.word === correctWord) b.classList.add('correct'); });
+    quizStreak = 0;
+    feedback.className = 'quiz-feedback bad';
+    feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${correctWord}</strong>.`;
+  }
+  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">➡️ Question suivante</button>`;
+  document.getElementById('drawBtn').addEventListener('click', drawQuiz);
+}
+
 
 function drawCard(){
   if(pool.length===0) refillPool();
@@ -638,21 +871,16 @@ document.getElementById('timerHudItem').addEventListener('click', ()=>{
   if(timerInterval){ stopTimer(); } else { startTimer(); }
 });
 
-document.getElementById('drawBtn').addEventListener('click', drawCard);
+document.getElementById('drawBtn').addEventListener('click', handleDraw);
 
 document.getElementById('resetBtn').addEventListener('click', ()=>{
-  setScore(0);
   stopTimer();
-  hasCardShown = false;
+  quizStreak = 0;
   activeCats = new Set(CATEGORIES.map(c=>c.id));
   renderCats();
   updateFilterSummary();
   refillPool();
-  document.getElementById('cardId').textContent='';
-  document.getElementById('catTab').style.visibility='hidden';
-  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt·e ?</div><div>Tire ta première carte pour commencer.</div></div>`;
-  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>`;
-  document.getElementById('drawBtn').addEventListener('click', drawCard);
+  setMode(mode);
 });
 
 renderCats();
@@ -662,8 +890,16 @@ resetTimerDisplay();
 updateFilterSummary();
 
 if ('serviceWorker' in navigator) {
+  let refreshed = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if(refreshed) return;
+    refreshed = true;
+    window.location.reload();
+  });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+      .then(reg => { reg.update().catch(()=>{}); })
+      .catch(()=>{});
   });
 }
 </script>
