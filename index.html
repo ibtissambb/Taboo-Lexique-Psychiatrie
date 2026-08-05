@@ -318,9 +318,22 @@
     background:none; border:none; font-family:'IBM Plex Sans',sans-serif;
   }
 
+  .share-btn{
+    display:block; margin:18px auto 0;
+    background:#fff; border:1.5px solid var(--line); border-radius:11px;
+    padding:11px 20px; font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:13.5px;
+    color:var(--primary); cursor:pointer; transition:.15s;
+  }
+  .share-btn:hover{ background:rgba(107,122,69,.06); border-color:var(--primary-light); }
+  .share-confirm{
+    text-align:center; margin-top:10px; font-size:12.5px; font-weight:600;
+    color:#3E7C4A;
+  }
+
   footer{ text-align:center; margin-top:26px; font-size:11.5px; color:#9aa5a0; }
   .byline{ font-weight:600; color:var(--ink); font-size:12.5px; }
 </style>
+<script data-goatcounter="https://nouvelhorizon.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -402,6 +415,9 @@
   </div>
 
   <button class="reset-link" id="resetBtn">réinitialiser la partie</button>
+
+  <button class="share-btn" id="shareBtn" type="button">📤 Partager Sémio'Défi</button>
+  <div id="shareConfirm" class="share-confirm" hidden>✅ Lien copié — colle-le où tu veux !</div>
 
   <footer><span class="byline">Un jeu conçu par BELAHDA Ibtissam &amp; PIED Audrey</span><br>Vocabulaire de sémiologie psychiatrique — ressource pédagogique originale.</footer>
 </div>
@@ -872,6 +888,26 @@ document.getElementById('timerHudItem').addEventListener('click', ()=>{
 });
 
 document.getElementById('drawBtn').addEventListener('click', handleDraw);
+
+document.getElementById('shareBtn').addEventListener('click', async ()=>{
+  const shareData = {
+    title: "Sémio'Défi",
+    text: "Sémio'Défi — un jeu pour réviser le vocabulaire de sémiologie psychiatrique en s'amusant.",
+    url: window.location.href,
+  };
+  if(navigator.share){
+    try { await navigator.share(shareData); } catch(e) {}
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(shareData.url);
+    const conf = document.getElementById('shareConfirm');
+    conf.removeAttribute('hidden');
+    setTimeout(()=> conf.setAttribute('hidden',''), 3000);
+  } catch(e) {
+    window.prompt('Copie ce lien :', shareData.url);
+  }
+});
 
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   stopTimer();
