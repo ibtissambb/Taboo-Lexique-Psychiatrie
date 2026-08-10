@@ -113,6 +113,12 @@
   .btn-taboo{ background:var(--accent); color:#fff; flex:0 0 21%; }
   .btn-taboo:hover{ background:#c44738; }
 
+  .auto-next{
+    width:100%; text-align:center;
+    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px;
+    color:var(--muted); padding:15px 10px;
+  }
+
   /* ---------- HUD ---------- */
   .hud{
     display:flex; justify-content:center; align-items:center; gap:8px;
@@ -393,7 +399,7 @@
       <line x1="50" y1="50" x2="66" y2="50" stroke="#FAF9F1" stroke-width="5" stroke-linecap="round"/>
     </svg>
     <h1>Sémio'Défi</h1>
-    <p class="sub" id="subText">Fais deviner le mot à ton binôme sans jamais prononcer les termes interdits.</p>
+    <p class="sub" id="subText">Fais deviner le mot à ton équipe sans jamais prononcer les termes interdits.</p>
   </header>
 
   <div class="mode-switch" id="modeSwitch">
@@ -648,6 +654,7 @@ function setMode(m){
   document.getElementById('subText').textContent = MODE_TEXT[m].sub;
   document.getElementById('scoreLabel').textContent = MODE_TEXT[m].scoreLabel;
   stopTimer();
+  clearTimeout(autoAdvanceTimeout);
   setScore(0);
   quizStreak = 0;
   wrongCount = 0;
@@ -793,6 +800,7 @@ function pickDistractors(correctCard, count){
 let wrongCount = 0;
 let missedWords = [];
 let soloRoundActive = false;
+let autoAdvanceTimeout = null;
 
 function startSoloRound(){
   setScore(0);
@@ -916,10 +924,10 @@ function handleTypedAnswer(card){
     feedback.className = 'quiz-feedback bad';
     feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
   }
-  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">➡️ Question suivante</button>`;
-  document.getElementById('drawBtn').addEventListener('click', drawQuiz);
+  document.getElementById('actionRow').innerHTML = `<div class="auto-next">➡️ Question suivante…</div>`;
+  clearTimeout(autoAdvanceTimeout);
+  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) drawQuiz(); }, 1400);
 }
-
 
 function handleQuizAnswer(btn, card){
   const allBtns = document.querySelectorAll('.quiz-choice');
@@ -944,12 +952,14 @@ function handleQuizAnswer(btn, card){
     feedback.className = 'quiz-feedback bad';
     feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
   }
-  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">➡️ Question suivante</button>`;
-  document.getElementById('drawBtn').addEventListener('click', drawQuiz);
+  document.getElementById('actionRow').innerHTML = `<div class="auto-next">➡️ Question suivante…</div>`;
+  clearTimeout(autoAdvanceTimeout);
+  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) drawQuiz(); }, 1400);
 }
 
 function endSoloRound(){
   soloRoundActive = false;
+  clearTimeout(autoAdvanceTimeout);
   document.getElementById('catTab').style.visibility = 'hidden';
   document.getElementById('cardId').textContent = '';
 
