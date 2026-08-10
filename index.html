@@ -84,14 +84,14 @@
   }
   .diff-btn .dot{ width:8px; height:8px; border-radius:50%; flex:none; background:currentColor; opacity:.55; }
   .diff-btn:hover:not(.active){ background:rgba(0,0,0,.03); }
-  .diff-btn[data-diff="facile"]{ color:#3E7C4A; }
-  .diff-btn[data-diff="moyen"]{ color:#B8971F; }
-  .diff-btn[data-diff="difficile"]{ color:var(--accent); }
+  .diff-btn[data-diff="novice"]{ color:#3E7C4A; }
+  .diff-btn[data-diff="intermediaire"]{ color:#B8971F; }
+  .diff-btn[data-diff="expert"]{ color:var(--accent); }
   .diff-btn.active{ border-color:currentColor; }
   .diff-btn.active .dot{ opacity:1; }
-  .diff-btn[data-diff="facile"].active{ background:rgba(62,124,74,.1); }
-  .diff-btn[data-diff="moyen"].active{ background:rgba(184,151,31,.1); }
-  .diff-btn[data-diff="difficile"].active{ background:rgba(140,74,66,.1); }
+  .diff-btn[data-diff="novice"].active{ background:rgba(62,124,74,.1); }
+  .diff-btn[data-diff="intermediaire"].active{ background:rgba(184,151,31,.1); }
+  .diff-btn[data-diff="expert"].active{ background:rgba(140,74,66,.1); }
 
 
   .action-row{
@@ -264,6 +264,53 @@
   .quiz-feedback.good{ color:#3E7C4A; }
   .quiz-feedback.bad{ color:var(--accent); }
 
+  .typed-answer{ display:flex; gap:8px; }
+  .typed-input{
+    flex:1; font-family:'IBM Plex Sans',sans-serif; font-size:15px; font-weight:600;
+    padding:12px 14px; border-radius:10px; border:1.5px solid var(--line);
+    color:var(--ink); background:#fff;
+  }
+  .typed-input:focus{ outline:none; border-color:var(--primary-light); }
+  .typed-input.correct{ border-color:#3E7C4A; background:rgba(62,124,74,.08); color:#3E7C4A; }
+  .typed-input.wrong{ border-color:var(--accent); background:rgba(140,74,66,.08); color:var(--accent); }
+  .typed-input:disabled{ cursor:default; }
+  .typed-submit{
+    font-family:'IBM Plex Sans',sans-serif; font-weight:700; font-size:14px;
+    padding:12px 18px; border-radius:10px; border:none;
+    background:var(--primary); color:#fff; cursor:pointer;
+  }
+  .typed-submit:disabled{ opacity:.5; cursor:default; }
+
+  /* ---------- Solo round summary ---------- */
+  .summary-title{
+    font-family:'Fraunces',serif; font-weight:700; font-size:22px;
+    color:var(--primary); text-align:center; margin-bottom:14px;
+  }
+  .summary-score{
+    display:flex; justify-content:center; gap:16px;
+    margin-bottom:20px;
+  }
+  .summary-score span{
+    font-weight:700; font-size:15px; padding:8px 14px; border-radius:10px;
+  }
+  .summary-score .ok{ background:rgba(62,124,74,.12); color:#3E7C4A; }
+  .summary-score .ko{ background:rgba(140,74,66,.12); color:var(--accent); }
+  .summary-sub{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:10px;
+  }
+  .summary-list{ display:flex; flex-direction:column; gap:8px; }
+  .summary-item{
+    font-size:13.5px; line-height:1.4; color:var(--ink);
+    background:rgba(107,122,69,.06); border:1px solid var(--line);
+    border-radius:9px; padding:9px 12px;
+  }
+  .summary-item strong{ color:var(--primary); }
+  .summary-perfect{
+    text-align:center; font-size:15px; font-weight:600; color:#3E7C4A;
+    padding:10px 0;
+  }
+
   /* ---------- Category filter (BOTTOM) ---------- */
   .filter-block{ margin-top:30px; }
   .filter-help{
@@ -350,14 +397,14 @@
   </header>
 
   <div class="mode-switch" id="modeSwitch">
-    <button class="mode-btn active" data-mode="duo" type="button">👥 Duo</button>
+    <button class="mode-btn active" data-mode="duo" type="button">👥 Équipe</button>
     <button class="mode-btn" data-mode="solo" type="button">👤 Solo</button>
   </div>
 
   <div class="diff-switch" id="diffSwitch" hidden>
-    <button class="diff-btn" data-diff="facile" type="button"><span class="dot"></span>Facile</button>
-    <button class="diff-btn active" data-diff="moyen" type="button"><span class="dot"></span>Moyen</button>
-    <button class="diff-btn" data-diff="difficile" type="button"><span class="dot"></span>Difficile</button>
+    <button class="diff-btn" data-diff="novice" type="button"><span class="dot"></span>Novice</button>
+    <button class="diff-btn active" data-diff="intermediaire" type="button"><span class="dot"></span>Intermédiaire</button>
+    <button class="diff-btn" data-diff="expert" type="button"><span class="dot"></span>Expert</button>
   </div>
 
   <div class="action-row" id="actionRow">
@@ -584,11 +631,11 @@ let hasCardShown = false;
 let mode = 'duo';
 const MODE_TEXT = {
   duo: {
-    sub: "Fais deviner le mot à ton binôme sans jamais prononcer les termes interdits.",
+    sub: "Fais deviner le mot à ton équipe sans jamais prononcer les termes interdits.",
     scoreLabel: "Score",
   },
   solo: {
-    sub: "Lis la définition et devine le bon mot parmi les propositions.",
+    sub: "Manche chronométrée d'une minute : lis la définition et devine le bon mot.",
     scoreLabel: "Bonnes réponses",
   },
 };
@@ -600,21 +647,25 @@ function setMode(m){
   });
   document.getElementById('subText').textContent = MODE_TEXT[m].sub;
   document.getElementById('scoreLabel').textContent = MODE_TEXT[m].scoreLabel;
+  stopTimer();
   setScore(0);
   quizStreak = 0;
+  wrongCount = 0;
+  missedWords = [];
+  soloRoundActive = false;
   hasCardShown = false;
   document.getElementById('cardId').textContent = '';
   document.getElementById('catTab').style.visibility = 'hidden';
-  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt·e ?</div><div>${m==='solo' ? 'Lance ta première question.' : 'Tire ta première carte pour commencer.'}</div></div>`;
+  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt·e ?</div><div>${m==='solo' ? "Lance ta manche d'une minute." : 'Tire ta première carte pour commencer.'}</div></div>`;
   document.getElementById('diffSwitch').hidden = (m !== 'solo');
   document.getElementById('actionRow').innerHTML = m==='solo'
-    ? `<button class="btn-draw" id="drawBtn">🎮 Commencer le quiz</button>`
+    ? `<button class="btn-draw" id="drawBtn">🎮 Démarrer le quiz (1 min)</button>`
     : `<button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>`;
   document.getElementById('drawBtn').addEventListener('click', handleDraw);
 }
 
 function handleDraw(){
-  if(mode === 'solo') drawQuiz(); else drawCard();
+  if(mode === 'solo') startSoloRound(); else drawCard();
 }
 
 document.getElementById('modeSwitch').addEventListener('click', (e)=>{
@@ -694,11 +745,11 @@ let quizStreak = 0;
 let quizBest = 0;
 try { quizBest = parseInt(localStorage.getItem('semioDefiBestStreak') || '0', 10) || 0; } catch(e) {}
 
-let difficulty = 'moyen';
+let difficulty = 'intermediaire';
 const DIFF_CONFIG = {
-  facile:    { choices: 2, distractorMode: 'diff' },
-  moyen:     { choices: 4, distractorMode: 'mix'  },
-  difficile: { choices: 6, distractorMode: 'same' },
+  novice:        { choices: 2, distractorMode: 'diff' },
+  intermediaire: { choices: 4, distractorMode: 'mix'  },
+  expert:        { typed: true },
 };
 
 document.getElementById('diffSwitch').addEventListener('click', (e)=>{
@@ -739,6 +790,52 @@ function pickDistractors(correctCard, count){
 }
 
 
+let wrongCount = 0;
+let missedWords = [];
+let soloRoundActive = false;
+
+function startSoloRound(){
+  setScore(0);
+  wrongCount = 0;
+  missedWords = [];
+  quizStreak = 0;
+  soloRoundActive = true;
+  refillPool();
+  drawQuiz();
+  startTimer();
+}
+
+function normalizeAnswer(s){
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().trim()
+    .replace(/[’]/g, "'")
+    .replace(/\s+/g,' ');
+}
+
+function levenshtein(a, b){
+  const m = a.length, n = b.length;
+  const dp = [];
+  for(let i=0;i<=m;i++){ dp.push(new Array(n+1).fill(0)); dp[i][0] = i; }
+  for(let j=0;j<=n;j++){ dp[0][j] = j; }
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+function isCloseEnough(input, target){
+  const a = normalizeAnswer(input);
+  const b = normalizeAnswer(target);
+  if(a === b) return { ok:true, exact:true };
+  if(!a) return { ok:false, exact:false };
+  const dist = levenshtein(a,b);
+  const maxLen = Math.max(a.length, b.length);
+  const threshold = maxLen <= 5 ? 1 : (maxLen <= 10 ? 2 : 3);
+  return { ok: dist <= threshold, exact:false };
+}
+
 function drawQuiz(){
   if(pool.length===0) refillPool();
   if(pool.length===0) return;
@@ -751,37 +848,84 @@ function drawQuiz(){
   tab.style.visibility = 'visible';
   document.getElementById('cardId').textContent = '#'+(DECK.indexOf(card)+1).toString().padStart(2,'0');
 
-  const distractors = pickDistractors(card, DIFF_CONFIG[difficulty].choices - 1);
-  const choices = [card, ...distractors];
-  for(let i=choices.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [choices[i],choices[j]] = [choices[j],choices[i]];
+  const cfg = DIFF_CONFIG[difficulty];
+
+  if(cfg.typed){
+    document.getElementById('cardBody').innerHTML = `
+      <div class="quiz-label">Définition</div>
+      <div class="quiz-def">${card.d}</div>
+      <div class="typed-answer">
+        <input type="text" id="typedInput" class="typed-input" placeholder="Tape le mot exact…" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="typed-submit" id="typedSubmit" type="button">Valider</button>
+      </div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+    `;
+    const input = document.getElementById('typedInput');
+    input.focus();
+    input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleTypedAnswer(card); });
+    document.getElementById('typedSubmit').addEventListener('click', ()=> handleTypedAnswer(card));
+  } else {
+    const distractors = pickDistractors(card, cfg.choices - 1);
+    const choices = [card, ...distractors];
+    for(let i=choices.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [choices[i],choices[j]] = [choices[j],choices[i]];
+    }
+    document.getElementById('cardBody').innerHTML = `
+      <div class="quiz-label">Définition</div>
+      <div class="quiz-def">${card.d}</div>
+      <div class="quiz-choices" id="quizChoices">
+        ${choices.map(c => `<button class="quiz-choice" type="button" data-word="${c.w.replace(/"/g,'&quot;')}">${c.w}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+    `;
+    document.querySelectorAll('.quiz-choice').forEach(btn=>{
+      btn.addEventListener('click', ()=> handleQuizAnswer(btn, card));
+    });
   }
-
-  document.getElementById('cardBody').innerHTML = `
-    <div class="quiz-label">Définition</div>
-    <div class="quiz-def">${card.d}</div>
-    <div class="quiz-choices" id="quizChoices">
-      ${choices.map(c => `<button class="quiz-choice" type="button" data-word="${c.w.replace(/"/g,'&quot;')}">${c.w}</button>`).join('')}
-    </div>
-    <div class="quiz-feedback" id="quizFeedback"></div>
-  `;
-
-  document.querySelectorAll('.quiz-choice').forEach(btn=>{
-    btn.addEventListener('click', ()=> handleQuizAnswer(btn, card.w));
-  });
 
   document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">⏭️ Passer cette question</button>`;
   document.getElementById('drawBtn').addEventListener('click', drawQuiz);
-
-  if(!timerInterval){ startTimer(); }
 }
 
-function handleQuizAnswer(btn, correctWord){
+function handleTypedAnswer(card){
+  const input = document.getElementById('typedInput');
+  const submitBtn = document.getElementById('typedSubmit');
+  const userVal = input.value;
+  input.disabled = true;
+  submitBtn.disabled = true;
+  const feedback = document.getElementById('quizFeedback');
+  const result = isCloseEnough(userVal, card.w);
+  if(result.ok){
+    input.classList.add('correct');
+    setScore(score+1);
+    quizStreak++;
+    if(quizStreak > quizBest){
+      quizBest = quizStreak;
+      try { localStorage.setItem('semioDefiBestStreak', String(quizBest)); } catch(e) {}
+    }
+    feedback.className = 'quiz-feedback good';
+    feedback.innerHTML = result.exact
+      ? `✅ Bravo ! Série en cours : ${quizStreak} 🔥 (record : ${quizBest})`
+      : `✅ Accepté (orthographe proche) ! La réponse exacte : <strong>${card.w}</strong>. Série : ${quizStreak} 🔥`;
+  } else {
+    input.classList.add('wrong');
+    quizStreak = 0;
+    wrongCount++;
+    missedWords.push({ w: card.w, d: card.d });
+    feedback.className = 'quiz-feedback bad';
+    feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
+  }
+  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">➡️ Question suivante</button>`;
+  document.getElementById('drawBtn').addEventListener('click', drawQuiz);
+}
+
+
+function handleQuizAnswer(btn, card){
   const allBtns = document.querySelectorAll('.quiz-choice');
   allBtns.forEach(b=>{ b.disabled = true; });
   const feedback = document.getElementById('quizFeedback');
-  if(btn.dataset.word === correctWord){
+  if(btn.dataset.word === card.w){
     btn.classList.add('correct');
     setScore(score+1);
     quizStreak++;
@@ -793,13 +937,41 @@ function handleQuizAnswer(btn, correctWord){
     feedback.innerHTML = `✅ Bravo ! Série en cours : ${quizStreak} 🔥 (record : ${quizBest})`;
   } else {
     btn.classList.add('wrong');
-    allBtns.forEach(b=>{ if(b.dataset.word === correctWord) b.classList.add('correct'); });
+    allBtns.forEach(b=>{ if(b.dataset.word === card.w) b.classList.add('correct'); });
     quizStreak = 0;
+    wrongCount++;
+    missedWords.push({ w: card.w, d: card.d });
     feedback.className = 'quiz-feedback bad';
-    feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${correctWord}</strong>.`;
+    feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
   }
   document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">➡️ Question suivante</button>`;
   document.getElementById('drawBtn').addEventListener('click', drawQuiz);
+}
+
+function endSoloRound(){
+  soloRoundActive = false;
+  document.getElementById('catTab').style.visibility = 'hidden';
+  document.getElementById('cardId').textContent = '';
+
+  const reviewHtml = missedWords.length
+    ? `<div class="summary-sub">Mots à retravailler</div>
+       <div class="summary-list">
+         ${missedWords.map(m => `<div class="summary-item"><strong>${m.w}</strong> — ${m.d}</div>`).join('')}
+       </div>`
+    : `<div class="summary-perfect">Aucune erreur, bravo ! 🎉</div>`;
+
+  document.getElementById('cardBody').innerHTML = `
+    <div class="summary">
+      <div class="summary-title">⏱️ Temps écoulé !</div>
+      <div class="summary-score">
+        <span class="ok">✅ ${score} bonnes</span>
+        <span class="ko">❌ ${wrongCount} fausses</span>
+      </div>
+      ${reviewHtml}
+    </div>
+  `;
+  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🔄 Rejouer (1 min)</button>`;
+  document.getElementById('drawBtn').addEventListener('click', startSoloRound);
 }
 
 
@@ -874,6 +1046,9 @@ function startTimer(){
       timerInterval=null;
       document.getElementById('timerVal').textContent = "⏰";
       document.getElementById('timerPlay').textContent = 'terminé';
+      if(mode === 'solo' && soloRoundActive){
+        endSoloRound();
+      }
     }
   },1000);
 }
