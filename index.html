@@ -2,1127 +2,379 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Sémio'Défi — Jeu de vocabulaire psychiatrique</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#6B7A45">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Sémio'Défi">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Un présage avant les noces</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#33362A;
-    --paper:#F2F0E6;
-    --card-paper:#FBFAF4;
-    --primary:#6B7A45;
-    --primary-light:#8B9A63;
-    --accent:#8C4A42;
-    --accent2:#C99A4A;
-    --line: rgba(51,54,42,.14);
-    --muted:#74795E;
-    --radius: 14px;
+    --navy:#141d33;
+    --navy-deep:#0b1120;
+    --wine:#6f1d34;
+    --wine-light:#8f2c46;
+    --gold:#c8a24d;
+    --gold-bright:#e6c877;
+    --parchment:#f2e9d8;
+    --parchment-dim:#e6d9bd;
+    --ink:#2a2015;
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  *{box-sizing:border-box;}
   body{
     margin:0;
-    background:
-      radial-gradient(circle at 12% 6%, rgba(107,122,69,.08), transparent 45%),
-      radial-gradient(circle at 92% 92%, rgba(140,74,66,.05), transparent 40%),
-      var(--paper);
-    font-family:'IBM Plex Sans', sans-serif;
-    color:var(--ink);
     min-height:100vh;
-    padding: 22px 16px 50px;
-  }
-  .wrap{max-width:480px; margin:0 auto;}
-
-  /* ---------- Header ---------- */
-  header{ text-align:center; margin-bottom:18px; display:flex; flex-direction:column; align-items:center; }
-  .logo-mark{ width:52px; height:52px; margin-bottom:10px; }
-  h1{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    font-size:clamp(28px, 7vw, 36px);
-    margin:0 0 4px;
-    color:var(--primary);
-    letter-spacing:-.01em;
-  }
-  .sub{ color:var(--muted); font-size:13.5px; max-width:380px; margin:0 auto; line-height:1.45; }
-
-  /* ---------- Mode switch (duo / solo) ---------- */
-  .mode-switch{
-    display:flex; gap:6px; justify-content:center;
-    margin:16px 0 4px;
-    background:#fff; border:1.5px solid var(--line); border-radius:11px;
-    padding:5px;
-  }
-  .mode-btn{
-    flex:1; border:none; background:none; cursor:pointer;
-    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:13px;
-    padding:9px 10px; border-radius:8px; color:var(--muted);
-    transition:.15s;
-  }
-  .mode-btn.active{ background:var(--primary); color:#fff; }
-
-  .diff-switch{
-    display:flex; gap:6px; justify-content:center;
-    margin:10px 0 4px;
-    background:#fff; border:1.5px solid var(--line); border-radius:11px;
-    padding:5px;
-  }
-  .diff-switch[hidden]{ display:none; }
-  .diff-btn{
-    flex:1; border:1.5px solid transparent; background:none; cursor:pointer;
-    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:12.5px;
-    padding:8px 8px; border-radius:8px; color:var(--muted);
-    transition:.15s;
-    display:flex; align-items:center; justify-content:center; gap:6px;
-  }
-  .diff-btn .dot{ width:8px; height:8px; border-radius:50%; flex:none; background:currentColor; opacity:.55; }
-  .diff-btn:hover:not(.active){ background:rgba(0,0,0,.03); }
-  .diff-btn[data-diff="novice"]{ color:#3E7C4A; }
-  .diff-btn[data-diff="intermediaire"]{ color:#B8971F; }
-  .diff-btn[data-diff="expert"]{ color:var(--accent); }
-  .diff-btn.active{ border-color:currentColor; }
-  .diff-btn.active .dot{ opacity:1; }
-  .diff-btn[data-diff="novice"].active{ background:rgba(62,124,74,.1); }
-  .diff-btn[data-diff="intermediaire"].active{ background:rgba(184,151,31,.1); }
-  .diff-btn[data-diff="expert"].active{ background:rgba(140,74,66,.1); }
-
-
-  .action-row{
-    display:flex; gap:8px; margin:20px 0 14px;
-  }
-  .action-row button{
-    font-family:'IBM Plex Sans', sans-serif; font-weight:700; font-size:14px;
-    border:none; border-radius:12px; padding:15px 10px;
-    cursor:pointer; transition:.15s;
-    box-shadow:0 6px 16px -8px rgba(29,43,42,.35);
-    display:flex; align-items:center; justify-content:center; gap:6px;
-  }
-  .action-row button:active{ transform:scale(.96); }
-  .btn-draw{ background:var(--primary); color:#fff; flex:1; font-size:15.5px; }
-  .btn-draw:hover{ background:var(--primary-light); }
-  .btn-skip{ background:#fff; color:var(--ink); border:1.5px solid var(--line) !important; flex:0 0 21%; }
-  .btn-found{ background:#3E7C4A; color:#fff; flex:1 1 48%; }
-  .btn-found:hover{ background:#4b9358;}
-  .btn-taboo{ background:var(--accent); color:#fff; flex:0 0 21%; }
-  .btn-taboo:hover{ background:#c44738; }
-
-  .auto-next{
-    width:100%; text-align:center;
-    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px;
-    color:var(--muted); padding:15px 10px;
-  }
-
-  /* ---------- HUD ---------- */
-  .hud{
-    display:flex; justify-content:center; align-items:center; gap:8px;
-    margin:0 0 20px;
-    background:#fff;
-    border:1.5px solid var(--line);
-    border-radius:14px;
-    padding:12px 10px;
-  }
-  .hud-item{ flex:1; text-align:center; }
-  #timerHudItem{ cursor:pointer; }
-  .hud-label{ font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
-  .hud-value{ font-family:'Fraunces',serif; font-weight:700; font-size:26px; color:var(--primary); line-height:1.2;}
-  .hud-div{ width:1px; align-self:stretch; background:var(--line); }
-  #timerRing{ position:relative; width:56px; height:56px; margin:0 auto; cursor:pointer; }
-  #timerRing svg{ transform:rotate(-90deg); }
-  #timerVal{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; color:var(--primary);
-  }
-  #timerPlay{
-    margin-top:6px;
-    font-size:9px; font-family:'IBM Plex Mono',monospace; color:var(--muted);
-    white-space:nowrap; text-align:center;
-  }
-
-  /* ---------- Card ---------- */
-  .stage{ display:flex; justify-content:center; margin: 26px 0 10px; }
-  .card-holder{ position:relative; width:100%; max-width:400px; }
-  .cat-tab{
-    position:absolute;
-    top:-14px; left:18px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
-    color:#fff; font-weight:600;
-    padding:7px 13px 6px;
-    border-radius:7px 7px 3px 3px;
-    transform:rotate(-2deg);
-    box-shadow:0 3px 0 rgba(0,0,0,.1);
-    z-index:2;
-  }
-  .card{
-    width:100%; min-height:400px;
-    background:var(--card-paper);
-    border-radius:var(--radius);
-    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 20px 44px -20px rgba(29,43,42,.4);
-    position:relative;
-    padding:30px 22px 24px;
-    border:1px solid var(--line);
-    display:flex; flex-direction:column;
-  }
-  .card-id{
-    position:absolute; top:14px; right:18px;
-    font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a9b3ae;
-  }
-  .word{
-    font-family:'Fraunces',serif; font-weight:700;
-    font-size:clamp(28px, 7vw, 36px);
-    color:var(--ink);
-    margin:4px 0 20px;
-    line-height:1.08;
-  }
-  .stamp-box{
-    position:relative;
-    border:2px solid var(--accent);
-    border-radius:8px;
-    padding:14px 16px;
-    background: repeating-linear-gradient(135deg, rgba(140,74,66,.055) 0 9px, rgba(140,74,66,.02) 9px 18px);
-    flex:1;
-    overflow:hidden;
-  }
-  .stamp-ghost{
-    position:absolute; right:-14px; top:8px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:26px; font-weight:700; letter-spacing:.04em;
-    color:var(--accent); opacity:.16;
-    transform:rotate(-14deg);
-    pointer-events:none;
-    white-space:nowrap;
-  }
-  .stamp-label{
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
-    text-transform:uppercase; color:var(--accent); margin-bottom:9px; font-weight:700;
-  }
-  .forbid-list{ list-style:none; margin:0; padding:0; position:relative; }
-  .forbid-list li{
-    font-size:16px; padding:5px 0; border-bottom:1px solid rgba(140,74,66,.18);
-    color:#3a2a28;
-  }
-  .forbid-list li:last-child{ border-bottom:none; }
-
-  .def-toggle{
-    margin-top:14px;
-    width:100%;
-    background:none;
-    border:1.5px dashed var(--primary-light);
-    border-radius:10px;
-    padding:10px 14px;
-    font-family:'IBM Plex Sans', sans-serif;
-    font-size:12.5px; font-weight:600;
-    color:var(--primary);
-    cursor:pointer;
-    transition:.15s;
-  }
-  .def-toggle:hover{ background:rgba(107,122,69,.08); }
-  .def-box{
-    margin-top:12px;
-    border-radius:10px;
-    padding:14px 16px;
-    background: rgba(107,122,69,.08);
-    border:1.5px solid var(--primary-light);
-  }
-  .def-label{
-    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em;
-    text-transform:uppercase; color:var(--primary); margin-bottom:6px; font-weight:600;
-  }
-  .def-text{ font-size:14.5px; color:var(--ink); line-height:1.42; }
-
-  .placeholder{
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    flex:1; text-align:center; color:var(--muted); gap:8px;
-  }
-  .placeholder .big{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--primary-light); }
-
-  /* ---------- Quiz (solo mode) ---------- */
-  .quiz-label{
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
-    text-transform:uppercase; color:var(--primary); font-weight:700; margin-bottom:8px;
-  }
-  .quiz-def{
-    font-size:17px; line-height:1.45; color:var(--ink); margin-bottom:20px;
-  }
-  .quiz-choices{
-    display:grid; grid-template-columns:1fr 1fr; gap:9px;
-  }
-  .quiz-choice{
-    font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:14px;
-    padding:13px 10px; border-radius:10px; border:1.5px solid var(--line);
-    background:#fff; color:var(--ink); cursor:pointer; transition:.15s;
-    text-align:center;
-  }
-  .quiz-choice:hover:not(:disabled){ border-color:var(--primary-light); background:rgba(107,122,69,.06); }
-  .quiz-choice:disabled{ cursor:default; }
-  .quiz-choice.correct{ background:#3E7C4A; border-color:#3E7C4A; color:#fff; }
-  .quiz-choice.wrong{ background:var(--accent); border-color:var(--accent); color:#fff; }
-  .quiz-feedback{
-    margin-top:16px; font-size:14px; font-weight:600; text-align:center; line-height:1.4;
-  }
-  .quiz-feedback.good{ color:#3E7C4A; }
-  .quiz-feedback.bad{ color:var(--accent); }
-
-  .typed-answer{ display:flex; gap:8px; }
-  .typed-input{
-    flex:1; font-family:'IBM Plex Sans',sans-serif; font-size:15px; font-weight:600;
-    padding:12px 14px; border-radius:10px; border:1.5px solid var(--line);
-    color:var(--ink); background:#fff;
-  }
-  .typed-input:focus{ outline:none; border-color:var(--primary-light); }
-  .typed-input.correct{ border-color:#3E7C4A; background:rgba(62,124,74,.08); color:#3E7C4A; }
-  .typed-input.wrong{ border-color:var(--accent); background:rgba(140,74,66,.08); color:var(--accent); }
-  .typed-input:disabled{ cursor:default; }
-  .typed-submit{
-    font-family:'IBM Plex Sans',sans-serif; font-weight:700; font-size:14px;
-    padding:12px 18px; border-radius:10px; border:none;
-    background:var(--primary); color:#fff; cursor:pointer;
-  }
-  .typed-submit:disabled{ opacity:.5; cursor:default; }
-
-  /* ---------- Solo round summary ---------- */
-  .summary-title{
-    font-family:'Fraunces',serif; font-weight:700; font-size:22px;
-    color:var(--primary); text-align:center; margin-bottom:14px;
-  }
-  .summary-score{
-    display:flex; justify-content:center; gap:16px;
-    margin-bottom:20px;
-  }
-  .summary-score span{
-    font-weight:700; font-size:15px; padding:8px 14px; border-radius:10px;
-  }
-  .summary-score .ok{ background:rgba(62,124,74,.12); color:#3E7C4A; }
-  .summary-score .ko{ background:rgba(140,74,66,.12); color:var(--accent); }
-  .summary-sub{
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
-    text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:10px;
-  }
-  .summary-list{ display:flex; flex-direction:column; gap:8px; }
-  .summary-item{
-    font-size:13.5px; line-height:1.4; color:var(--ink);
-    background:rgba(107,122,69,.06); border:1px solid var(--line);
-    border-radius:9px; padding:9px 12px;
-  }
-  .summary-item strong{ color:var(--primary); }
-  .summary-perfect{
-    text-align:center; font-size:15px; font-weight:600; color:#3E7C4A;
-    padding:10px 0;
-  }
-
-  /* ---------- Category filter (BOTTOM) ---------- */
-  .filter-block{ margin-top:30px; }
-  .filter-help{
-    font-size:12.5px; color:var(--muted); line-height:1.5;
-    background:#fff; border:1.5px solid var(--line); border-radius:12px;
-    padding:12px 14px; margin-bottom:10px;
-  }
-  .filter-help strong{ color:var(--ink); }
-  .filter-toggle{
-    width:100%;
-    display:flex; align-items:center; justify-content:space-between;
-    background:#fff;
-    border:1.5px solid var(--line);
-    border-radius:11px;
-    padding:11px 14px;
-    font-family:'IBM Plex Sans', sans-serif;
-    font-weight:600; font-size:13.5px;
-    color:var(--ink);
-    cursor:pointer;
-  }
-  .filter-toggle .chev{ transition:transform .2s; color:var(--muted); }
-  .filter-toggle.open .chev{ transform:rotate(180deg); }
-  .filter-panel{
-    max-height:0; overflow:hidden;
-    transition:max-height .25s ease;
-  }
-  .filter-panel.open{ max-height:400px; }
-  .cats{
-    display:flex; flex-wrap:wrap; gap:7px;
-    padding:12px 2px 4px;
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(200,162,77,0.10), transparent 55%),
+      radial-gradient(ellipse at 85% 110%, rgba(111,29,52,0.25), transparent 60%),
+      linear-gradient(180deg, var(--navy-deep), var(--navy) 55%, var(--navy-deep));
+    font-family:'EB Garamond', serif;
+    color:var(--parchment);
+    display:flex;
     justify-content:center;
+    padding:32px 16px 60px;
   }
-  .cat-chip{
+  .stage{ width:100%; max-width:600px; }
+
+  .crest{ text-align:center; margin-bottom:6px; }
+  .crest .eyebrow{
     font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    padding:7px 12px;
-    border-radius:8px;
-    border:1.5px solid var(--line);
-    background:#fff;
-    cursor:pointer;
-    display:flex; align-items:center; gap:6px;
-    transition:.15s;
+    letter-spacing:.25em; font-size:11px;
+    color:var(--gold); text-transform:uppercase;
+  }
+  h1{
+    font-family:'Playfair Display', serif;
+    font-weight:900; font-style:italic;
+    font-size:clamp(26px,6vw,38px);
+    text-align:center; margin:6px 0 2px;
+    color:var(--parchment);
+    text-shadow:0 2px 18px rgba(200,162,77,0.25);
+  }
+  .subtitle{
+    text-align:center; color:var(--parchment-dim);
+    font-size:16px; margin:0 0 22px; line-height:1.55;
+  }
+  .divider{
+    display:flex; align-items:center; gap:12px;
+    margin:18px auto 26px; max-width:300px;
+  }
+  .divider::before,.divider::after{
+    content:''; flex:1; height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+  .divider span{ color:var(--gold); font-size:14px; }
+
+  .card{
+    background:linear-gradient(180deg, var(--parchment), var(--parchment-dim));
     color:var(--ink);
+    border-radius:6px;
+    padding:34px 30px 30px;
+    position:relative;
+    box-shadow:0 20px 50px rgba(0,0,0,0.45), 0 0 0 1px rgba(200,162,77,0.5);
   }
-  .cat-chip .dot{width:7px;height:7px;border-radius:50%;flex:none;}
-  .cat-chip.active{ border-color:currentColor; color:#fff !important; }
-  .cat-chip.active .dot{ background:#fff !important; }
+  .card::before{
+    content:'';
+    position:absolute; inset:9px;
+    border:1px solid rgba(111,29,52,0.35);
+    pointer-events:none;
+  }
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--wine); margin-bottom:10px;
+  }
+  .poem{
+    font-family:'Playfair Display', serif;
+    font-style:italic; font-weight:500;
+    font-size:18px; line-height:2;
+    margin:0 0 22px;
+    border-left:2px solid var(--gold);
+    padding-left:18px;
+  }
+  .poem .cap{
+    font-weight:900; color:var(--wine);
+    font-style:normal;
+  }
+  .instruction{
+    font-size:16px; line-height:1.6; margin:0 0 18px;
+  }
 
-  .reset-link{
-    display:block; text-align:center; margin-top:18px;
-    font-size:12px; color:var(--muted); text-decoration:underline; cursor:pointer;
-    background:none; border:none; font-family:'IBM Plex Sans',sans-serif;
+  .hint-toggle{
+    background:none; border:none; color:var(--wine);
+    font-family:'EB Garamond',serif; font-style:italic; font-size:15px;
+    cursor:pointer; padding:0; margin:0 0 6px; text-decoration:underline;
+    text-underline-offset:3px; display:block;
+  }
+  .hint-box{
+    display:none; background:rgba(111,29,52,0.08);
+    border-left:3px solid var(--wine);
+    padding:10px 14px; font-size:15px; margin:6px 0 14px; border-radius:0 4px 4px 0;
+  }
+  .hint-box.show{ display:block; }
+
+  .answer-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  input[type=text]{
+    flex:1; min-width:180px;
+    font-family:'EB Garamond',serif; font-size:17px;
+    padding:14px 14px;
+    border:1.5px solid rgba(42,32,21,0.3);
+    border-radius:4px; background:#fffdf8; color:var(--ink);
+    min-height:48px;
+  }
+  input[type=text]:focus{ outline:none; border-color:var(--wine); box-shadow:0 0 0 3px rgba(111,29,52,0.12); }
+
+  .verify-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px; letter-spacing:.08em; text-transform:uppercase;
+    padding:12px 22px; background:var(--wine); color:var(--parchment);
+    border:none; border-radius:4px; cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+    min-height:48px;
+  }
+  .verify-btn:hover{ background:var(--wine-light); }
+  .verify-btn:active{ transform:scale(0.97); }
+  .verify-btn:disabled{ opacity:0.55; cursor:default; }
+
+  .feedback{ margin-top:14px; font-size:15px; font-style:italic; min-height:20px; }
+  .feedback.err{ color:var(--wine); animation:shake .35s ease; }
+  .feedback.ok{ color:#4f6b34; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-4px); }
+    75%{ transform:translateX(4px); }
   }
 
-  .share-btn{
-    display:block; margin:18px auto 0;
-    background:#fff; border:1.5px solid var(--line); border-radius:11px;
-    padding:11px 20px; font-family:'IBM Plex Sans',sans-serif; font-weight:600; font-size:13.5px;
-    color:var(--primary); cursor:pointer; transition:.15s;
+  .cipher-strip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:15px; letter-spacing:.06em;
+    background:var(--navy-deep); color:var(--gold-bright);
+    padding:16px 18px; border-radius:4px;
+    text-align:center; word-spacing:6px;
+    margin:0 0 8px;
+    box-shadow:inset 0 0 0 1px rgba(200,162,77,0.3);
+    cursor:pointer; user-select:all;
+    position:relative;
   }
-  .share-btn:hover{ background:rgba(107,122,69,.06); border-color:var(--primary-light); }
-  .share-confirm{
-    text-align:center; margin-top:10px; font-size:12.5px; font-weight:600;
-    color:#3E7C4A;
+  .cipher-strip:active{ box-shadow:inset 0 0 0 1px rgba(200,162,77,0.6); }
+  .copy-hint{
+    text-align:center; font-size:12px; color:rgba(242,233,216,0.45);
+    font-family:'IBM Plex Mono', monospace; letter-spacing:.05em;
+    margin:0 0 22px;
   }
 
-  footer{ text-align:center; margin-top:26px; font-size:11.5px; color:#9aa5a0; }
-  .byline{ font-weight:600; color:var(--ink); font-size:12.5px; }
+  .copy-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.06em;
+    text-transform:uppercase; background:none; border:1px solid rgba(111,29,52,0.4);
+    color:var(--wine); padding:8px 14px; border-radius:4px; cursor:pointer;
+    margin-top:16px; min-height:40px;
+  }
+  .copy-btn:hover{ background:rgba(111,29,52,0.08); }
+
+  .indice-reveal{
+    margin-top:24px; padding-top:22px;
+    border-top:1px dashed rgba(111,29,52,0.35);
+    display:none;
+  }
+  .indice-reveal.show{ display:block; animation:unseal .7s ease; }
+  @keyframes unseal{
+    from{ opacity:0; transform:translateY(6px) scale(0.98); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+  .indice-reveal .label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px;
+    letter-spacing:.2em; text-transform:uppercase;
+    color:var(--wine); margin-bottom:8px;
+  }
+  .indice-reveal .indice-text{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:700;
+    font-size:22px; line-height:1.5; color:var(--ink);
+  }
+  .indice-reveal .postscript{
+    margin-top:14px; font-size:15px; color:#4a3c28;
+  }
+
+  .footnote{
+    text-align:center; margin-top:26px;
+    font-size:13px; color:rgba(242,233,216,0.4);
+    font-style:italic;
+  }
 </style>
-<script data-goatcounter="https://nouvelhorizon.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <meta name="theme-color" content="#141d33">
+  <meta property="og:title" content="Murder Party n°7 — Un présage avant les noces">
+  <meta property="og:description" content="Un secret est dissimulé dans ce faire-part. Peu le trouveront.">
 </head>
 <body>
-<div class="wrap">
+<div class="stage">
 
-  <header>
-    <svg class="logo-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <rect x="0" y="0" width="100" height="100" rx="20" fill="#6B7A45"/>
-      <circle cx="50" cy="50" r="30" fill="none" stroke="#FAF9F1" stroke-width="6"/>
-      <line x1="50" y1="50" x2="50" y2="28" stroke="#FAF9F1" stroke-width="5" stroke-linecap="round"/>
-      <line x1="50" y1="50" x2="66" y2="50" stroke="#FAF9F1" stroke-width="5" stroke-linecap="round"/>
-    </svg>
-    <h1>Sémio'Défi</h1>
-    <p class="sub" id="subText">Fais deviner le mot à ton équipe sans jamais prononcer les termes interdits.</p>
-  </header>
-
-  <div class="mode-switch" id="modeSwitch">
-    <button class="mode-btn active" data-mode="duo" type="button">👥 Équipe</button>
-    <button class="mode-btn" data-mode="solo" type="button">👤 Solo</button>
+  <div class="crest">
+    <div class="eyebrow">Murder Party n°7 · Faire-part</div>
   </div>
+  <h1>Un présage avant les noces</h1>
+  <p class="subtitle" id="introText"></p>
+  <div class="divider"><span>❧</span></div>
 
-  <div class="diff-switch" id="diffSwitch" hidden>
-    <button class="diff-btn" data-diff="novice" type="button"><span class="dot"></span>Novice</button>
-    <button class="diff-btn active" data-diff="intermediaire" type="button"><span class="dot"></span>Intermédiaire</button>
-    <button class="diff-btn" data-diff="expert" type="button"><span class="dot"></span>Expert</button>
-  </div>
+  <div class="card" id="puzzleCard"></div>
 
-  <div class="action-row" id="actionRow">
-    <button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>
-  </div>
-
-  <div class="hud">
-    <div class="hud-item">
-      <div class="hud-label" id="scoreLabel">Score</div>
-      <div class="hud-value" id="scoreVal">0</div>
-    </div>
-    <div class="hud-div"></div>
-    <div class="hud-item" id="timerHudItem">
-      <div id="timerRing">
-        <svg width="56" height="56">
-          <circle cx="28" cy="28" r="23" fill="none" stroke="#e1e0d3" stroke-width="5"/>
-          <circle id="ringProgress" cx="28" cy="28" r="23" fill="none" stroke="var(--accent2)" stroke-width="5"
-            stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="0"/>
-        </svg>
-        <div id="timerVal">60</div>
-      </div>
-      <div id="timerPlay">appuyer ▸</div>
-    </div>
-    <div class="hud-div"></div>
-    <div class="hud-item">
-      <div class="hud-label">Restantes</div>
-      <div class="hud-value" id="remainVal">0</div>
-    </div>
-  </div>
-
-  <div class="stage">
-    <div class="card-holder">
-      <div class="cat-tab" id="catTab" style="visibility:hidden;">catégorie</div>
-      <div class="card" id="card">
-        <span class="card-id" id="cardId"></span>
-        <div id="cardBody" class="placeholder">
-          <div class="big">Prêt·e ?</div>
-          <div>Tire ta première carte pour commencer.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="filter-block">
-    <div class="filter-help">
-      <strong>À quoi servent les catégories ?</strong> Par défaut, les 114 cartes de toutes les catégories sont mélangées. Tu peux désactiver certains thèmes ci-dessous pour faire une manche ciblée — par exemple ne réviser que « Langage & discours » avant un cours, ou retirer une catégorie déjà bien maîtrisée par le groupe.
-    </div>
-    <button class="filter-toggle" id="filterToggle">
-      <span id="filterSummary">🗂️ Catégories — 10 / 10 actives</span>
-      <span class="chev">▾</span>
-    </button>
-    <div class="filter-panel" id="filterPanel">
-      <div class="cats" id="cats"></div>
-    </div>
-  </div>
-
-  <button class="reset-link" id="resetBtn">réinitialiser la partie</button>
-
-  <button class="share-btn" id="shareBtn" type="button">📤 Partager Sémio'Défi</button>
-  <div id="shareConfirm" class="share-confirm" hidden>✅ Lien copié — colle-le où tu veux !</div>
-
-  <footer><span class="byline">Un jeu conçu par BELAHDA Ibtissam &amp; PIED Audrey</span><br>Vocabulaire de sémiologie psychiatrique — ressource pédagogique originale.</footer>
+  <p class="footnote">Le reste vous parviendra en temps voulu.</p>
 </div>
 
 <script>
-const CATEGORIES = [
-  {id:'emotions', label:'Émotions & affects', color:'#3E7C7C'},
-  {id:'langage', label:'Langage & discours', color:'#6C4F8C'},
-  {id:'pensee', label:'Pensée & idées délirantes', color:'#A83E38'},
-  {id:'perceptions', label:'Perceptions', color:'#35507A'},
-  {id:'moteur', label:'Comportement moteur', color:'#C07A2E'},
-  {id:'cognition', label:'Conscience & cognition', color:'#46607A'},
-  {id:'comportement', label:'Comportement & personnalité', color:'#4C7A4C'},
-  {id:'anxiete', label:'Anxiété & phobies', color:'#B8971F'},
-  {id:'humeur', label:"Troubles de l'humeur", color:'#B85C8A'},
-  {id:'urgences', label:'Urgences & addictions', color:'#6E2749'},
+/* ============================================================
+   CONFIGURATION — modifiable librement.
+   L'énigme se résout en deux temps :
+   1) un mot se cache dans les initiales du poème (acrostiche)
+   2) sa longueur donne le décalage pour déchiffrer le message
+      (chiffre de César) glissé sous le poème.
+   La phrase déchiffrée EST l'indice — volontairement énigmatique.
+   ============================================================ */
+
+const INTRO = "Un message est dissimulé dans ce faire-part. Le percer n'est pas nécessaire pour participer à la Murder Party : chacun y prendra part, indice ou non. Mais ceux qui le déchiffreront recevront, en plus, un indice que les autres convives n'auront pas.";
+
+const POEM_LINES = [
+  "L'or scintille aux doigts des invités qui s'avancent vers le grand escalier de marbre.",
+  "Il resplendit surtout sur les alliances que l'on échangera devant l'autel.",
+  "Grande est la salle où l'on dressera bientôt les tables du festin nuptial.",
+  "Nul, parmi les cousins éloignés venus des quatre coins du royaume, ne se doute de rien.",
+  "Et sous les habits brodés d'or, les sourires se figent dès que le silence retombe.",
+  "Et pourtant un nom, murmuré une seule fois dans l'ombre du couloir, ne s'oublie plus."
 ];
 
-const DECK = [
-// Émotions & affects
-{c:'emotions', w:'Affect', f:['émotion','ressenti','expression','comportement observable'], d:"Manière dont une émotion se manifeste concrètement dans le comportement d'une personne."},
-{c:'emotions', w:'Anhédonie', f:['plaisir','positif','émotion','incapacité'], d:"Perte de la capacité à éprouver du plaisir face à des situations habituellement agréables."},
-{c:'emotions', w:'Ambivalence', f:['contradictoire','simultané','opposé','sentiment'], d:"Présence simultanée de deux affects opposés envers une même personne ou un même objet."},
-{c:'emotions', w:'Apathie', f:['indifférence','désintérêt','émotion','absence'], d:"Baisse marquée de la motivation et de l'intérêt pour ce qui entoure la personne."},
-{c:'emotions', w:'Athymhormie', f:['élan vital','motivation','affectivité','perte'], d:"Effondrement de l'initiative et de la vie affective, sans autre trouble associé."},
-{c:'emotions', w:'Dysphorie', f:['irritabilité','tristesse','humeur','déplaisant'], d:"Humeur teintée d'irritabilité, de malaise et de tension désagréable."},
-{c:'emotions', w:'Euphorie', f:['joie','excessive','gaieté','humeur'], d:"Sentiment de joie disproportionné par rapport au contexte."},
-{c:'emotions', w:'Euthymie', f:['stable','neutre','équilibre','humeur'], d:"Humeur stable, ni excessivement haute ni basse."},
-{c:'emotions', w:'Anesthésie affective', f:['froideur','absence','ressenti','émotion'], d:"Incapacité à ressentir quoi que ce soit sur le plan émotionnel, comme coupé de ses affects."},
-{c:'emotions', w:'Discordance idéo-affective', f:['contradiction','discours','émotion','incohérence'], d:"Décalage entre ce qui est dit et l'émotion exprimée au même moment."},
+const INSTRUCTION = "Un mot de six lettres se cache dans ce texte. Trouvez-le. Il ne suffira pas seul : ce faire-part porte un numéro, et ce numéro a lui aussi sa lettre. Quant au message ci-dessous, il n'a pas seulement changé de lettres — certains de ses caractères ont changé de nature.";
 
-// Langage & discours
-{c:'langage', w:'Alogie', f:['pauvreté','langage','réponse','appauvrissement'], d:"Réduction du contenu et de la richesse du discours, réponses minimalistes."},
-{c:'langage', w:'Barrages', f:['suspension','discours','brusque','arrêt'], d:"Interruption soudaine et inexpliquée du discours en cours."},
-{c:'langage', w:'Coq à l\'âne', f:['sujet','lien','idée','passer d\'un à l\'autre'], d:"Enchaînement de propos sans lien logique apparent entre eux."},
-{c:'langage', w:'Diffluence', f:['désorganisé','dispersé','pensée','discours'], d:"Discours qui part dans plusieurs directions sans fil conducteur repérable."},
-{c:'langage', w:'Discours circonstancié', f:['détail','inutile','recentrer','propos'], d:"Discours envahi de détails superflus qui retardent la conclusion du propos."},
-{c:'langage', w:'Discours tangentiel', f:['écart','but','sujet','perdu'], d:"Réponse qui s'éloigne progressivement de la question initiale sans y revenir."},
-{c:'langage', w:'Echolalie', f:['répétition','mot','dernier','entendu'], d:"Répétition automatique des derniers mots prononcés par l'interlocuteur."},
-{c:'langage', w:'Logorrhée', f:['débit','parole','élevé','intarissable'], d:"Flot de paroles abondant, quasiment impossible à interrompre."},
-{c:'langage', w:'Néologisme', f:['mot','invention','symbolique','sens'], d:"Mot inventé, chargé de sens pour la personne mais incompréhensible pour autrui."},
-{c:'langage', w:'Palilalie', f:['répétition','syllabe','mot','constante'], d:"Répétition automatique de syllabes ou de mots par la personne elle-même."},
-{c:'langage', w:'Persévération', f:['répète','insistance','involontaire','réponse'], d:"Répétition involontaire de la même réponse malgré un changement de question."},
-{c:'langage', w:'Salade de mots', f:['assemblage','aléatoire','mots','lien logique'], d:"Discours composé de mots juxtaposés sans construction grammaticale ni sens."},
-{c:'langage', w:'Coprolalie', f:['mots','grossiers','émission','langage'], d:"Émission répétée de propos grossiers ou obscènes."},
-{c:'langage', w:'Tachyphémie', f:['rythme','accéléré','verbal','débit'], d:"Élocution anormalement rapide."},
-{c:'langage', w:'Bradyphémie', f:['lenteur','rythme','verbal','parole'], d:"Élocution anormalement ralentie."},
+const CIPHER_TEXT = "E(23)A(07) L(09)X(20)B(07)T(09) G(07)N(16)K (08)R (17)K(25)A(21)A(11)I";
 
-// Pensée & idées délirantes
-{c:'pensee', w:'Bradypsychie', f:['ralentissement','pensée','idée','lenteur'], d:"Ralentissement global du cours de la pensée."},
-{c:'pensee', w:'Tachypsychie', f:['précipitation','idée','vitesse','pensée'], d:"Emballement du rythme de la pensée, plus rapide que la parole ne peut suivre."},
-{c:'pensee', w:'Fuite des idées', f:['défiler','vitesse','sujet','rapide'], d:"Enchaînement très rapide d'idées, rendant le discours décousu."},
-{c:'pensee', w:'Idées fixes', f:['persistance','idée','s\'impose','champ intellectuel'], d:"Pensée envahissante qui s'impose durablement à l'esprit."},
-{c:'pensee', w:'Pensée concrète', f:['abstrait','faits','concret','focalisation'], d:"Difficulté à raisonner de façon abstraite, réflexion centrée sur le factuel immédiat."},
-{c:'pensee', w:'Idées délirantes', f:['conviction','fausse','croyance','réalité'], d:"Croyances erronées, maintenues malgré les preuves du contraire, hors norme culturelle de la personne."},
-{c:'pensee', w:'Délire de persécution', f:['menace','danger','mal','sentiment'], d:"Conviction d'être visé ou menacé par autrui sans fondement réel."},
-{c:'pensee', w:'Délire mystique', f:['religion','thème','croyance','délirant'], d:"Contenu délirant organisé autour de thèmes religieux ou sacrés."},
-{c:'pensee', w:'Mégalomanie', f:['puissance','grandeur','surestime','capacité'], d:"Surestimation de ses propres capacités, de son pouvoir ou de son importance."},
-{c:'pensee', w:'Idées de référence', f:['événement','rapporter','environnement','croit'], d:"Interprétation d'événements neutres comme s'adressant personnellement à soi."},
-{c:'pensee', w:'Idées de contrôle', f:['objet','personne','régissent','comportement'], d:"Sentiment que ses actes sont dirigés par une force ou une personne extérieure."},
-{c:'pensee', w:'Quérulence', f:['revendication','judiciaire','préjudice','responsabilité'], d:"Recherche obstinée de réparation judiciaire pour un tort réel ou imaginé."},
-{c:'pensee', w:'Paranoïa', f:['méfiance','soupçon','interprétatif','réel'], d:"Méfiance excessive et interprétation systématiquement négative des intentions d'autrui."},
+// Réponse acceptée = message déchiffré (espaces/accents/casse ignorés)
+const ACCEPTED = ["tout heritage cache un mensonge", "toutheritagecacheunmensonge"];
 
-// Perceptions
-{c:'perceptions', w:'Hallucination', f:['perception','stimulus','sensorielle','fausse'], d:"Perception vécue comme réelle en l'absence de tout stimulus extérieur."},
-{c:'perceptions', w:'Hallucination auditive', f:['voix','son','entendre','bruit'], d:"Perception de sons ou de voix qui n'existent pas dans la réalité."},
-{c:'perceptions', w:'Hallucination visuelle', f:['image','voir','perception','formée'], d:"Perception d'images ou de formes qui n'existent pas dans la réalité."},
-{c:'perceptions', w:'Illusion', f:['déformée','objet','réel','perception'], d:"Interprétation erronée d'un stimulus réellement présent."},
-{c:'perceptions', w:'Echo de pensée', f:['pensée','répétée','voix','entendre'], d:"Sensation d'entendre ses propres pensées répétées à voix haute."},
-{c:'perceptions', w:'Dépersonnalisation', f:['étrangeté','soi-même','détaché','corps'], d:"Sentiment de devenir étranger à soi-même, comme spectateur de sa propre vie."},
-{c:'perceptions', w:'Déréalisation', f:['réel','environnement','distorsion','irréel'], d:"Sentiment que le monde environnant est devenu irréel ou étrange."},
+const HINT_1 = "Toutes les lettres du texte ne se valent pas. Certaines, à une place bien précise, comptent plus que les autres.";
+const HINT_2 = "Le mot cherché a autant de lettres que le texte a de phrases. Quant au numéro de cette soirée, transformez-le en lettre — la même lettre qu'on obtient en comptant l'alphabet jusqu'à ce chiffre — et ajoutez-la à la fin du mot. C'est cette clé complète, répétée en boucle, qui ouvre chaque lettre du message.";
+const HINT_3 = "Certains caractères de ce message ont changé de nature, mais pas de valeur. Cherchez ce qui, dans l'alphabet, leur donne un rang.";
 
-// Comportement moteur
-{c:'moteur', w:'Akathisie', f:['agitation','immobile','tension','moteur'], d:"Impossibilité de rester immobile, associée à une tension intérieure marquée."},
-{c:'moteur', w:'Akinésie', f:['mouvement','initier','difficulté','volontaire'], d:"Difficulté à initier un mouvement volontaire."},
-{c:'moteur', w:'Ataxie', f:['coordination','mouvement','manque','fine'], d:"Perte de la coordination fine des mouvements."},
-{c:'moteur', w:'Bradykinésie', f:['ralentissement','mouvement','volontaire','lent'], d:"Lenteur générale des mouvements volontaires."},
-{c:'moteur', w:'Catalepsie', f:['rigidité','posture','figée','musculaire'], d:"Maintien prolongé d'une posture imposée, sans résistance."},
-{c:'moteur', w:'Catatonie', f:['immobilité','mutisme','réaction','absence'], d:"Blocage global moteur et psychique, avec absence de réaction à l'environnement."},
-{c:'moteur', w:'Dyskinésie', f:['mouvement','anormal','coordination','perturbation'], d:"Mouvement involontaire et anormal, hors du contrôle de la personne."},
-{c:'moteur', w:'Echopraxie', f:['imite','mouvement','automatique','autres'], d:"Imitation automatique et incontrôlée des gestes d'autrui."},
-{c:'moteur', w:'Sidération', f:['immobilisme','mort','apparente','état'], d:"Blocage complet, comme figé, en l'absence de toute réaction."},
-{c:'moteur', w:'Jactation', f:['gestes','désordonnés','sans','suite'], d:"Agitation gestuelle désordonnée, sans but apparent."},
+const CLUE_LABEL = "Présage";
+const CLUE_TEXT = "Tout héritage cache un mensonge.";
+const CLUE_POSTSCRIPT = "Retenez cette phrase. Elle prendra tout son sens le soir venu — et vous seul(e) l'aurez lue avant les autres.";
 
-// Conscience & cognition
-{c:'cognition', w:'Confusion', f:['conscience','dissolution','désorganisation','mémoire'], d:"Altération globale et transitoire de la conscience, avec désorientation."},
-{c:'cognition', w:'Obnubilation', f:['vigilance','conscience','obscurcissement','baisse'], d:"Diminution de la clarté de la conscience et de la vigilance."},
-{c:'cognition', w:'Agnosie', f:['reconnaître','objet','sensorielle','incapacité'], d:"Incapacité à identifier un objet malgré des organes sensoriels fonctionnels."},
-{c:'cognition', w:'Aphasie', f:['parler','langage','comprendre','perte'], d:"Trouble de la production ou de la compréhension du langage."},
-{c:'cognition', w:'Confabulation', f:['mémoire','fausse','information','croit sincèrement'], d:"Récit de faits inventés que la personne présente sincèrement comme vrais."},
-{c:'cognition', w:'Dissociation', f:['rupture','intégration','mentale','fonction'], d:"Sentiment de discontinuité entre pensée, mémoire, identité et perception."},
+// Compteur discret : incrémenté une seule fois par appareil, uniquement
+// quand la PHRASE complète (pas le mot-clé intermédiaire) est validée.
+const COUNTER_KEY = "ibtissam-murder-party-7-enigme-faire-part-2026";
+const COUNTER_LOCK = "royalWeddingEnigmeSolved";
 
-// Comportement & personnalité
-{c:'comportement', w:'Aboulie', f:['volonté','décision','choisir','incapacité'], d:"Incapacité à mobiliser sa volonté pour initier une action ou faire un choix."},
-{c:'comportement', w:'Apragmatisme', f:['action','projet','entreprendre','incapacité'], d:"Difficulté marquée à mener à bien des projets concrets."},
-{c:'comportement', w:'Volition', f:['but','activité','accomplir','incapacité'], d:"Trouble touchant la capacité à orienter durablement son comportement vers un but."},
-{c:'comportement', w:'Incurie', f:['hygiène','soin','négligence','manque'], d:"Négligence marquée de son hygiène et de son cadre de vie."},
-{c:'comportement', w:'Clinophilie', f:['couché','permanence','durée','comportement'], d:"Tendance à rester alité de façon excessive, sans raison médicale."},
-{c:'comportement', w:'Désinhibition', f:['convenance','sociale','pudeur','comportement'], d:"Comportement social inadapté par manque de retenue habituelle."},
-{c:'comportement', w:'Histrionisme', f:['théâtral','attention','expressivité','attitude'], d:"Recherche d'attention par des attitudes exagérément expressives."},
-{c:'comportement', w:'Psychopathie', f:['antisocial','comportement','personnalité','pathologique'], d:"Fonctionnement de la personnalité marqué par des conduites antisociales répétées."},
-{c:'comportement', w:'Mythomanie', f:['vérité','altération','récit','imaginaire'], d:"Tendance durable à déformer la vérité par des récits fictifs."},
-{c:'comportement', w:'Kleptomanie', f:['voler','objet','résister','impossibilité'], d:"Impulsion répétée et incontrôlable à dérober des objets."},
-{c:'comportement', w:'Syllogomanie', f:['accumulation','compulsive','Diogène','objets'], d:"Accumulation compulsive d'objets, souvent associée à l'insalubrité du logement."},
+/* ============================================================
+   MOTEUR
+   ============================================================ */
 
-// Anxiété & phobies
-{c:'anxiete', w:'Acrophobie', f:['hauteur','peur','élevé','crainte'], d:"Peur intense des lieux ou situations en hauteur."},
-{c:'anxiete', w:'Agoraphobie', f:['échapper','secouru','situation','crainte'], d:"Peur des situations où il serait difficile de fuir ou d'obtenir de l'aide."},
-{c:'anxiete', w:'Claustrophobie', f:['clos','lieu','confiné','peur'], d:"Peur des espaces fermés ou confinés."},
-{c:'anxiete', w:'Phobie', f:['peur','objet','situation','crainte'], d:"Peur irrationnelle liée à un objet ou une situation précise, disparaissant en son absence."},
-{c:'anxiete', w:'Anxiété', f:['tension','peur','chronique','nerveuse'], d:"Tension diffuse et anticipatoire, souvent durable dans le temps."},
-{c:'anxiete', w:'Angoisse', f:['oppression','resserrement','malheur','intense'], d:"Sensation intense d'oppression physique liée à une crainte mal définie."},
-{c:'anxiete', w:'Obsession', f:['préoccupation','pénible','contrôler','esprit'], d:"Pensée intrusive et récurrente, vécue comme désagréable et incontrôlable."},
-{c:'anxiete', w:'Compulsion', f:['acte','résister','force','angoisse'], d:"Acte répétitif effectué pour apaiser une tension interne ou une obsession."},
-{c:'anxiete', w:'Rituels', f:['répété','précis','empêcher','action'], d:"Séquence d'actions répétées selon un schéma rigide et immuable."},
-
-// Humeur
-{c:'humeur', w:'Manie', f:['surexcitation','exaltation','humeur','intellectuelle'], d:"État d'exaltation extrême de l'humeur et de l'activité psychique."},
-{c:'humeur', w:'Hypomanie', f:['humeur','expansive','activité','anormale'], d:"Élévation de l'humeur et de l'énergie, plus discrète que la manie."},
-{c:'humeur', w:'Mélancolie', f:['dépressive','tristesse','ralentissement','douleur'], d:"Forme sévère de tristesse pathologique, avec ralentissement marqué."},
-{c:'humeur', w:'Cyclothymie', f:['exaltation','désespoir','période','humeur'], d:"Alternance chronique entre phases d'euphorie et phases de tristesse."},
-{c:'humeur', w:'Dysthymie', f:['dépressive','chronique','modérée','humeur'], d:"Humeur basse, durable, mais d'intensité modérée."},
-{c:'humeur', w:'Dépression', f:['humeur','ralentissement','activité','pathologique'], d:"Baisse durable de l'humeur associée à un ralentissement global du fonctionnement."},
-
-// Urgences & addictions
-{c:'urgences', w:'Raptus', f:['soudain','impulsif','passage à l\'acte','tension'], d:"Passage à l'acte brutal et imprévisible, sous l'effet d'une tension extrême."},
-{c:'urgences', w:'Crise clastique', f:['violence','objets','brise','contrôle'], d:"Décharge de violence soudaine, avec destruction d'objets environnants."},
-{c:'urgences', w:'Délirium Tremens', f:['sevrage','alcool','complication','mental'], d:"Complication grave et aiguë du sevrage alcoolique, engageant le pronostic vital."},
-{c:'urgences', w:'Autolyse', f:['autodestructeur','mort','comportement','conduit'], d:"Comportement visant à se donner volontairement la mort."},
-{c:'urgences', w:'Craving', f:['envie','irrépressible','addictif','comportement'], d:"Besoin impérieux et difficilement contrôlable de consommer une substance ou de réaliser un comportement."},
-{c:'urgences', w:'Anorexie mentale', f:['alimentaire','privation','refus','nourriture'], d:"Restriction alimentaire volontaire et sévère, pouvant menacer la vie."},
-{c:'urgences', w:'Boulimie', f:['alimentation','excessive','ingestion','nourriture'], d:"Épisodes répétés de prise alimentaire massive, rapide et incontrôlée, accompagnés de comportements compensatoires."},
-{c:'urgences', w:'Cachexie', f:['maigreur','extrême','affaiblissement','pronostic'], d:"Amaigrissement extrême avec altération sévère de l'état général."},
-{c:'urgences', w:'Abstinence', f:['produit','privation','durable','choix'], d:"Renoncement volontaire et durable à une consommation ou un comportement, idéalement choisi par la personne elle-même."},
-{c:'urgences', w:'Abstention', f:['ponctuel','consommation','moment','durée'], d:"Non-consommation à un moment donné, sans engagement dans la durée, à la différence de l'abstinence."},
-{c:'urgences', w:'Accoutumance', f:['besoin','quantité','substance','initiaux'], d:"Besoin d'augmenter la quantité de la substance pour retrouver les effets initiaux."},
-{c:'urgences', w:'Tolérance', f:['dose','effet','substance','quantité'], d:"Diminution de l'effet d'une substance à dose égale, nécessitant une augmentation progressive des quantités."},
-{c:'urgences', w:'Addiction', f:['comportement','malaise','conséquences','conscience'], d:"Comportement répété malgré la conscience de ses conséquences négatives, employé pour atténuer un malaise."},
-{c:'urgences', w:'Conduites et pratiques addictives', f:['consommation','risque','substance','comportement'], d:"Ensemble des comportements de consommation de substances, incluant les usages à risque et la dépendance installée."},
-{c:'urgences', w:"Personne avec un trouble de l'usage d'alcool", f:['chronique','excessive','dépendance','consommation'], d:"Personne qui souffre d'une maladie chronique caractérisée par une consommation excessive, répétée et incontrôlée d'alcool, et/ou d'une dépendance physique et psychologique."},
-{c:'urgences', w:'Binge drinking', f:['alcool','rapide','ivresse','jeunes'], d:"Consommation d'un maximum d'alcool en un minimum de temps, dans un but d'ivresse rapide et massive."},
-{c:'urgences', w:'Cure', f:['séjour','établissement','produit','distance'], d:"Séjour en établissement spécialisé visant une mise à distance d'un produit, sans garantir à lui seul une guérison définitive."},
-{c:'urgences', w:'Dépendance', f:['critères','substance','diagnostic','sevrage'], d:"État clinique défini par des critères diagnostiques officiels, traduisant une tolérance et des symptômes de sevrage."},
-{c:'urgences', w:'Dépistage', f:['test','maladie','précoce','examen'], d:"Recherche précoce, à l'aide de tests ou d'examens, d'une maladie ou d'une anomalie passée inaperçue."},
-{c:'urgences', w:'Substance psychoactive', f:['cerveau','perception','humeur','fonctions'], d:"Terme courant désignant une substance qui agit sur le cerveau en modifiant certaines de ses fonctions (perception, sensation, humeur, conscience, comportement ou autre)."},
-{c:'urgences', w:'Postcure', f:['séjour','consolidation','établissement','soins'], d:"Période de soins prolongée faisant suite à un premier séjour thérapeutique, destinée à consolider les objectifs atteints."},
-{c:'urgences', w:'Prévention', f:['risque','santé','action','population'], d:"Ensemble d'actions visant à réduire l'apparition, l'aggravation ou les conséquences d'un problème de santé."},
-{c:'urgences', w:'Traitement agoniste opioïde', f:['traitement','méthadone','substitution','héroïne'], d:"Méthode médicale qui remplace la consommation d'opioïdes par des médicaments prescrits et contrôlés, dans un objectif de réduction des risques et des dommages."},
-{c:'urgences', w:'Rechute', f:['retour','maladie','apprentissage','rémission'], d:"Reprise évolutive d'un trouble après une période de rémission, caractérisée par la perte de contrôle de la consommation ou du comportement."},
-{c:'urgences', w:'Réduction des risques et des dommages', f:['consommation','limiter','conséquences','sécurité'], d:"Approche de santé publique visant à limiter les risques et les conséquences d'une consommation, sans nécessairement viser son arrêt."},
-{c:'urgences', w:'Sevrage', f:['produit','symptômes','arrêt','manque'], d:"Mise à distance d'un produit, pouvant s'accompagner d'un syndrome physique ou psychique de manque à l'arrêt ou à la diminution de la consommation."},
-{c:'urgences', w:'Vape', f:['cigarette','électronique','fumée','nicotine'], d:"Dispositif électronique produisant une vapeur inhalée, utilisé comme moyen de réduction des risques à la cigarette traditionnelle."},
-];
-
-const catMap = Object.fromEntries(CATEGORIES.map(c=>[c.id,c]));
-let activeCats = new Set(CATEGORIES.map(c=>c.id));
-let pool = [];
-let score = 0;
-let timerInterval = null;
-let timeLeft = 60;
-const TOTAL_TIME = 60;
-const RING_CIRC = 144.5;
-let hasCardShown = false;
-let mode = 'duo';
-const MODE_TEXT = {
-  duo: {
-    sub: "Fais deviner le mot à ton équipe sans jamais prononcer les termes interdits.",
-    scoreLabel: "Score",
-  },
-  solo: {
-    sub: "Manche chronométrée d'une minute : lis la définition et devine le bon mot.",
-    scoreLabel: "Bonnes réponses",
-  },
-};
-
-function setMode(m){
-  mode = m;
-  document.querySelectorAll('.mode-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.mode === m);
-  });
-  document.getElementById('subText').textContent = MODE_TEXT[m].sub;
-  document.getElementById('scoreLabel').textContent = MODE_TEXT[m].scoreLabel;
-  stopTimer();
-  clearTimeout(autoAdvanceTimeout);
-  setScore(0);
-  quizStreak = 0;
-  wrongCount = 0;
-  missedWords = [];
-  soloRoundActive = false;
-  hasCardShown = false;
-  document.getElementById('cardId').textContent = '';
-  document.getElementById('catTab').style.visibility = 'hidden';
-  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt·e ?</div><div>${m==='solo' ? "Lance ta manche d'une minute." : 'Tire ta première carte pour commencer.'}</div></div>`;
-  document.getElementById('diffSwitch').hidden = (m !== 'solo');
-  document.getElementById('actionRow').innerHTML = m==='solo'
-    ? `<button class="btn-draw" id="drawBtn">🎮 Démarrer le quiz (1 min)</button>`
-    : `<button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>`;
-  document.getElementById('drawBtn').addEventListener('click', handleDraw);
+function normalize(str){
+  return str.trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g," ");
+}
+function normalizeTight(str){
+  return normalize(str).replace(/\s+/g,"");
 }
 
-function handleDraw(){
-  if(mode === 'solo') startSoloRound(); else drawCard();
+function renderIntro(){
+  document.getElementById('introText').textContent = INTRO;
 }
 
-document.getElementById('modeSwitch').addEventListener('click', (e)=>{
-  const btn = e.target.closest('.mode-btn');
-  if(!btn) return;
-  setMode(btn.dataset.mode);
-});
+function renderPuzzle(){
+  const card = document.getElementById('puzzleCard');
+  const poemHtml = POEM_LINES.map(line => `${line}<br>`).join('');
 
+  card.innerHTML = `
+    <div class="tag">Énigme du faire-part</div>
+    <div class="poem">${poemHtml}</div>
+    <p class="instruction">${INSTRUCTION}</p>
+    <div class="cipher-strip" id="cipherStrip" title="Toucher pour copier">${CIPHER_TEXT}</div>
+    <p class="copy-hint" id="copyHint">Touchez le message pour le copier.</p>
 
-function refillPool(){
-  pool = DECK.filter(d => activeCats.has(d.c));
-  for(let i=pool.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [pool[i],pool[j]]=[pool[j],pool[i]];
-  }
-  updateRemain();
-}
+    <button class="hint-toggle" id="hintToggle1" onclick="toggleHint(1)">Premier indice de jeu</button>
+    <div class="hint-box" id="hintBox1">${HINT_1}</div>
+    <button class="hint-toggle" id="hintToggle2" onclick="toggleHint(2)">Second indice de jeu</button>
+    <div class="hint-box" id="hintBox2">${HINT_2}</div>
+    <button class="hint-toggle" id="hintToggle3" onclick="toggleHint(3)">Troisième indice de jeu</button>
+    <div class="hint-box" id="hintBox3">${HINT_3}</div>
 
-function updateRemain(){
-  document.getElementById('remainVal').textContent = pool.length;
-}
+    <div class="answer-row">
+      <input type="text" id="answerInput" placeholder="Message déchiffré..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text" onkeydown="if(event.key==='Enter')checkAnswer()">
+      <button class="verify-btn" id="verifyBtn" onclick="checkAnswer()">Vérifier</button>
+    </div>
+    <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
 
-function updateFilterSummary(){
-  document.getElementById('filterSummary').textContent =
-    `🗂️ Catégories — ${activeCats.size} / ${CATEGORIES.length} actives`;
-}
-
-function renderCats(){
-  const el = document.getElementById('cats');
-  el.innerHTML='';
-  CATEGORIES.forEach(cat=>{
-    const chip = document.createElement('div');
-    const isActive = activeCats.has(cat.id);
-    chip.className = isActive ? 'cat-chip active' : 'cat-chip';
-    chip.innerHTML = `<span class="dot" style="${isActive ? '' : `background:${cat.color}`}"></span>${cat.label}`;
-    if(isActive){
-      chip.style.background = cat.color;
-      chip.style.color = '';
-    } else {
-      chip.style.background = '#fff';
-      chip.style.color = cat.color;
-    }
-    chip.addEventListener('click', ()=>{
-      if(activeCats.has(cat.id)){
-        if(activeCats.size>1) activeCats.delete(cat.id);
-      } else {
-        activeCats.add(cat.id);
-      }
-      renderCats();
-      refillPool();
-      updateFilterSummary();
-    });
-    el.appendChild(chip);
-  });
-}
-
-document.getElementById('filterToggle').addEventListener('click', (e)=>{
-  const btn = e.currentTarget;
-  const panel = document.getElementById('filterPanel');
-  btn.classList.toggle('open');
-  panel.classList.toggle('open');
-});
-
-function showResponseButtons(){
-  const row = document.getElementById('actionRow');
-  row.innerHTML = `
-    <button class="btn-skip" id="skipBtn">⏭️</button>
-    <button class="btn-found" id="foundBtn">✅ Trouvé</button>
-    <button class="btn-taboo" id="tabooBtn">🚫</button>
-  `;
-  document.getElementById('foundBtn').addEventListener('click', ()=>{ setScore(score+1); drawCard(); });
-  document.getElementById('skipBtn').addEventListener('click', drawCard);
-  document.getElementById('tabooBtn').addEventListener('click', ()=>{ setScore(score-1); drawCard(); });
-}
-
-let quizStreak = 0;
-let quizBest = 0;
-try { quizBest = parseInt(localStorage.getItem('semioDefiBestStreak') || '0', 10) || 0; } catch(e) {}
-
-let difficulty = 'intermediaire';
-const DIFF_CONFIG = {
-  novice:        { choices: 2, distractorMode: 'diff' },
-  intermediaire: { choices: 4, distractorMode: 'mix'  },
-  expert:        { typed: true },
-};
-
-document.getElementById('diffSwitch').addEventListener('click', (e)=>{
-  const btn = e.target.closest('.diff-btn');
-  if(!btn) return;
-  difficulty = btn.dataset.diff;
-  document.querySelectorAll('.diff-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.diff === difficulty);
-  });
-});
-
-function shuffleArr(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]] = [arr[j],arr[i]];
-  }
-  return arr;
-}
-
-function pickDistractors(correctCard, count){
-  const cfg = DIFF_CONFIG[difficulty];
-  let primaryPool;
-  if(cfg.distractorMode === 'diff'){
-    primaryPool = DECK.filter(d => d.w !== correctCard.w && d.c !== correctCard.c);
-  } else if(cfg.distractorMode === 'same'){
-    primaryPool = DECK.filter(d => d.w !== correctCard.w && d.c === correctCard.c);
-  } else {
-    primaryPool = DECK.filter(d => d.w !== correctCard.w);
-  }
-  shuffleArr(primaryPool);
-  let chosen = primaryPool.slice(0, count);
-  if(chosen.length < count){
-    const used = new Set(chosen.map(c=>c.w).concat([correctCard.w]));
-    const fallback = shuffleArr(DECK.filter(d => !used.has(d.w)));
-    chosen = chosen.concat(fallback.slice(0, count - chosen.length));
-  }
-  return chosen;
-}
-
-
-let wrongCount = 0;
-let missedWords = [];
-let soloRoundActive = false;
-let autoAdvanceTimeout = null;
-
-function startSoloRound(){
-  setScore(0);
-  wrongCount = 0;
-  missedWords = [];
-  quizStreak = 0;
-  soloRoundActive = true;
-  refillPool();
-  drawQuiz();
-  startTimer();
-}
-
-function normalizeAnswer(s){
-  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .toLowerCase().trim()
-    .replace(/[’]/g, "'")
-    .replace(/\s+/g,' ');
-}
-
-function levenshtein(a, b){
-  const m = a.length, n = b.length;
-  const dp = [];
-  for(let i=0;i<=m;i++){ dp.push(new Array(n+1).fill(0)); dp[i][0] = i; }
-  for(let j=0;j<=n;j++){ dp[0][j] = j; }
-  for(let i=1;i<=m;i++){
-    for(let j=1;j<=n;j++){
-      dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
-    }
-  }
-  return dp[m][n];
-}
-
-function isCloseEnough(input, target){
-  const a = normalizeAnswer(input);
-  const b = normalizeAnswer(target);
-  if(a === b) return { ok:true, exact:true };
-  if(!a) return { ok:false, exact:false };
-  const dist = levenshtein(a,b);
-  const maxLen = Math.max(a.length, b.length);
-  const threshold = maxLen <= 5 ? 1 : (maxLen <= 10 ? 2 : 3);
-  return { ok: dist <= threshold, exact:false };
-}
-
-function drawQuiz(){
-  if(pool.length===0) refillPool();
-  if(pool.length===0) return;
-  const card = pool.pop();
-  updateRemain();
-  const cat = catMap[card.c];
-  const tab = document.getElementById('catTab');
-  tab.textContent = cat.label;
-  tab.style.background = cat.color;
-  tab.style.visibility = 'visible';
-  document.getElementById('cardId').textContent = '#'+(DECK.indexOf(card)+1).toString().padStart(2,'0');
-
-  const cfg = DIFF_CONFIG[difficulty];
-
-  if(cfg.typed){
-    document.getElementById('cardBody').innerHTML = `
-      <div class="quiz-label">Définition</div>
-      <div class="quiz-def">${card.d}</div>
-      <div class="typed-answer">
-        <input type="text" id="typedInput" class="typed-input" placeholder="Tape le mot exact…" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <button class="typed-submit" id="typedSubmit" type="button">Valider</button>
-      </div>
-      <div class="quiz-feedback" id="quizFeedback"></div>
-    `;
-    const input = document.getElementById('typedInput');
-    input.focus();
-    input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleTypedAnswer(card); });
-    document.getElementById('typedSubmit').addEventListener('click', ()=> handleTypedAnswer(card));
-  } else {
-    const distractors = pickDistractors(card, cfg.choices - 1);
-    const choices = [card, ...distractors];
-    for(let i=choices.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [choices[i],choices[j]] = [choices[j],choices[i]];
-    }
-    document.getElementById('cardBody').innerHTML = `
-      <div class="quiz-label">Définition</div>
-      <div class="quiz-def">${card.d}</div>
-      <div class="quiz-choices" id="quizChoices">
-        ${choices.map(c => `<button class="quiz-choice" type="button" data-word="${c.w.replace(/"/g,'&quot;')}">${c.w}</button>`).join('')}
-      </div>
-      <div class="quiz-feedback" id="quizFeedback"></div>
-    `;
-    document.querySelectorAll('.quiz-choice').forEach(btn=>{
-      btn.addEventListener('click', ()=> handleQuizAnswer(btn, card));
-    });
-  }
-
-  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">⏭️ Passer cette question</button>`;
-  document.getElementById('drawBtn').addEventListener('click', drawQuiz);
-}
-
-function handleTypedAnswer(card){
-  const input = document.getElementById('typedInput');
-  const submitBtn = document.getElementById('typedSubmit');
-  const userVal = input.value;
-  input.disabled = true;
-  submitBtn.disabled = true;
-  const feedback = document.getElementById('quizFeedback');
-  const result = isCloseEnough(userVal, card.w);
-  if(result.ok){
-    input.classList.add('correct');
-    setScore(score+1);
-    quizStreak++;
-    if(quizStreak > quizBest){
-      quizBest = quizStreak;
-      try { localStorage.setItem('semioDefiBestStreak', String(quizBest)); } catch(e) {}
-    }
-    feedback.className = 'quiz-feedback good';
-    feedback.innerHTML = result.exact
-      ? `✅ Bravo ! Série en cours : ${quizStreak} 🔥 (record : ${quizBest})`
-      : `✅ Accepté (orthographe proche) ! La réponse exacte : <strong>${card.w}</strong>. Série : ${quizStreak} 🔥`;
-  } else {
-    input.classList.add('wrong');
-    quizStreak = 0;
-    wrongCount++;
-    missedWords.push({ w: card.w, d: card.d });
-    feedback.className = 'quiz-feedback bad';
-    feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
-  }
-  document.getElementById('actionRow').innerHTML = `<div class="auto-next">➡️ Question suivante…</div>`;
-  clearTimeout(autoAdvanceTimeout);
-  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) drawQuiz(); }, 1400);
-}
-
-function handleQuizAnswer(btn, card){
-  const allBtns = document.querySelectorAll('.quiz-choice');
-  allBtns.forEach(b=>{ b.disabled = true; });
-  const feedback = document.getElementById('quizFeedback');
-  if(btn.dataset.word === card.w){
-    btn.classList.add('correct');
-    setScore(score+1);
-    quizStreak++;
-    if(quizStreak > quizBest){
-      quizBest = quizStreak;
-      try { localStorage.setItem('semioDefiBestStreak', String(quizBest)); } catch(e) {}
-    }
-    feedback.className = 'quiz-feedback good';
-    feedback.innerHTML = `✅ Bravo ! Série en cours : ${quizStreak} 🔥 (record : ${quizBest})`;
-  } else {
-    btn.classList.add('wrong');
-    allBtns.forEach(b=>{ if(b.dataset.word === card.w) b.classList.add('correct'); });
-    quizStreak = 0;
-    wrongCount++;
-    missedWords.push({ w: card.w, d: card.d });
-    feedback.className = 'quiz-feedback bad';
-    feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
-  }
-  document.getElementById('actionRow').innerHTML = `<div class="auto-next">➡️ Question suivante…</div>`;
-  clearTimeout(autoAdvanceTimeout);
-  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) drawQuiz(); }, 1400);
-}
-
-function endSoloRound(){
-  soloRoundActive = false;
-  clearTimeout(autoAdvanceTimeout);
-  document.getElementById('catTab').style.visibility = 'hidden';
-  document.getElementById('cardId').textContent = '';
-
-  const reviewHtml = missedWords.length
-    ? `<div class="summary-sub">Mots à retravailler</div>
-       <div class="summary-list">
-         ${missedWords.map(m => `<div class="summary-item"><strong>${m.w}</strong> — ${m.d}</div>`).join('')}
-       </div>`
-    : `<div class="summary-perfect">Aucune erreur, bravo ! 🎉</div>`;
-
-  document.getElementById('cardBody').innerHTML = `
-    <div class="summary">
-      <div class="summary-title">⏱️ Temps écoulé !</div>
-      <div class="summary-score">
-        <span class="ok">✅ ${score} bonnes</span>
-        <span class="ko">❌ ${wrongCount} fausses</span>
-      </div>
-      ${reviewHtml}
+    <div class="indice-reveal" id="indiceReveal" aria-live="polite">
+      <div class="label">${CLUE_LABEL} révélé</div>
+      <div class="indice-text">${CLUE_TEXT}</div>
+      <div class="postscript">${CLUE_POSTSCRIPT}</div>
+      <button class="copy-btn" onclick="copyText('${CLUE_TEXT.replace(/'/g,"\\'")}', this)">Copier la phrase</button>
     </div>
   `;
-  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🔄 Rejouer (1 min)</button>`;
-  document.getElementById('drawBtn').addEventListener('click', startSoloRound);
-}
 
-
-function drawCard(){
-  if(pool.length===0) refillPool();
-  if(pool.length===0) return;
-  const card = pool.pop();
-  updateRemain();
-  const cat = catMap[card.c];
-  const tab = document.getElementById('catTab');
-  tab.textContent = cat.label;
-  tab.style.background = cat.color;
-  tab.style.visibility = 'visible';
-  document.getElementById('cardId').textContent = '#'+(DECK.indexOf(card)+1).toString().padStart(2,'0');
-  document.getElementById('cardBody').innerHTML = `
-    <div class="word">${card.w}</div>
-    <div class="stamp-box">
-      <div class="stamp-ghost">INTERDIT</div>
-      <div class="stamp-label">Mots interdits</div>
-      <ul class="forbid-list">${card.f.map(w=>`<li>${w}</li>`).join('')}</ul>
-    </div>
-    <button class="def-toggle" id="defToggle" type="button">❓ Je ne connais pas ce mot — voir la définition</button>
-    <div class="def-box" id="defBox" hidden>
-      <div class="def-label">Définition</div>
-      <div class="def-text">${card.d}</div>
-    </div>
-  `;
-  const defBtn = document.getElementById('defToggle');
-  const defBox = document.getElementById('defBox');
-  defBtn.addEventListener('click', ()=>{
-    const hidden = defBox.hasAttribute('hidden');
-    if(hidden){
-      defBox.removeAttribute('hidden');
-      defBtn.textContent = '🙈 Masquer la définition';
-    } else {
-      defBox.setAttribute('hidden','');
-      defBtn.textContent = '❓ Je ne connais pas ce mot — voir la définition';
-    }
+  document.getElementById('cipherStrip').addEventListener('click', () => {
+    copyText(CIPHER_TEXT, null, 'copyHint');
   });
-
-  if(!hasCardShown){
-    hasCardShown = true;
-    showResponseButtons();
-  }
-  if(!timerInterval){
-    startTimer();
-  }
 }
 
-function setScore(v){
-  score = v;
-  document.getElementById('scoreVal').textContent = score;
-}
-
-function resetTimerDisplay(){
-  timeLeft = TOTAL_TIME;
-  document.getElementById('timerVal').textContent = timeLeft;
-  document.getElementById('ringProgress').style.strokeDashoffset = 0;
-  document.getElementById('timerPlay').textContent = 'appuyer ▸';
-}
-
-function startTimer(){
-  if(timerInterval){ return; }
-  timeLeft = TOTAL_TIME;
-  document.getElementById('timerPlay').textContent = 'en cours';
-  timerInterval = setInterval(()=>{
-    timeLeft--;
-    document.getElementById('timerVal').textContent = Math.max(timeLeft,0);
-    document.getElementById('ringProgress').style.strokeDashoffset = RING_CIRC * (1 - timeLeft/TOTAL_TIME);
-    if(timeLeft<=0){
-      clearInterval(timerInterval);
-      timerInterval=null;
-      document.getElementById('timerVal').textContent = "⏰";
-      document.getElementById('timerPlay').textContent = 'terminé';
-      if(mode === 'solo' && soloRoundActive){
-        endSoloRound();
-      }
+function copyText(text, btn, hintId){
+  const finish = (label) => {
+    if(btn){
+      const original = btn.textContent;
+      btn.textContent = label;
+      setTimeout(() => { btn.textContent = original; }, 1800);
     }
-  },1000);
-}
-
-function stopTimer(){
-  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
-  resetTimerDisplay();
-}
-
-document.getElementById('timerHudItem').addEventListener('click', ()=>{
-  if(timerInterval){ stopTimer(); } else { startTimer(); }
-});
-
-document.getElementById('drawBtn').addEventListener('click', handleDraw);
-
-document.getElementById('shareBtn').addEventListener('click', async ()=>{
-  const shareData = {
-    title: "Sémio'Défi",
-    text: "Sémio'Défi — un jeu pour réviser le vocabulaire de sémiologie psychiatrique en s'amusant.",
-    url: window.location.href,
+    if(hintId){
+      const hintEl = document.getElementById(hintId);
+      const original = hintEl.textContent;
+      hintEl.textContent = label;
+      setTimeout(() => { hintEl.textContent = original; }, 1800);
+    }
   };
-  if(navigator.share){
-    try { await navigator.share(shareData); } catch(e) {}
-    return;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(() => finish('Copié.')).catch(() => finish('Copie impossible sur cet appareil.'));
+  } else {
+    finish('Copie impossible sur cet appareil.');
   }
-  try {
-    await navigator.clipboard.writeText(shareData.url);
-    const conf = document.getElementById('shareConfirm');
-    conf.removeAttribute('hidden');
-    setTimeout(()=> conf.setAttribute('hidden',''), 3000);
-  } catch(e) {
-    window.prompt('Copie ce lien :', shareData.url);
-  }
-});
-
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  stopTimer();
-  quizStreak = 0;
-  activeCats = new Set(CATEGORIES.map(c=>c.id));
-  renderCats();
-  updateFilterSummary();
-  refillPool();
-  setMode(mode);
-});
-
-renderCats();
-refillPool();
-setScore(0);
-resetTimerDisplay();
-updateFilterSummary();
-
-if ('serviceWorker' in navigator) {
-  let refreshed = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if(refreshed) return;
-    refreshed = true;
-    window.location.reload();
-  });
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
-      .then(reg => { reg.update().catch(()=>{}); })
-      .catch(()=>{});
-  });
 }
+
+function toggleHint(n){
+  const box = document.getElementById('hintBox' + n);
+  const toggle = document.getElementById('hintToggle' + n);
+  const isShowing = box.classList.toggle('show');
+  const labels = { 1: "Premier indice de jeu", 2: "Second indice de jeu", 3: "Troisième indice de jeu" };
+  toggle.textContent = isShowing ? `Masquer l'indice n°${n}` : labels[n];
+}
+
+function checkAnswer(){
+  const val = normalizeTight(document.getElementById('answerInput').value);
+  const ok = ACCEPTED.some(a => normalizeTight(a) === val);
+  const fb = document.getElementById('feedback');
+  const btn = document.getElementById('verifyBtn');
+  if(ok){
+    fb.textContent = "Le message est déchiffré.";
+    fb.className = 'feedback ok';
+    const reveal = document.getElementById('indiceReveal');
+    reveal.classList.add('show');
+    document.getElementById('answerInput').disabled = true;
+    btn.disabled = true;
+    registerSolve();
+    setTimeout(() => reveal.scrollIntoView({behavior:'smooth', block:'center'}), 250);
+  } else {
+    fb.classList.remove('err');
+    void fb.offsetWidth; // relance l'animation si l'erreur se répète
+    fb.textContent = "Ce n'est pas encore cela — réessayez.";
+    fb.className = 'feedback err';
+  }
+}
+
+function registerSolve(){
+  try{
+    if(localStorage.getItem(COUNTER_LOCK)) return; // déjà compté depuis cet appareil
+    localStorage.setItem(COUNTER_LOCK, '1');
+    fetch(`https://countapi.mileshilliard.com/api/v1/hit/${COUNTER_KEY}`).catch(()=>{});
+  }catch(e){
+    // localStorage indisponible (navigation privée, etc.) : on tente quand même l'appel une fois
+    fetch(`https://countapi.mileshilliard.com/api/v1/hit/${COUNTER_KEY}`).catch(()=>{});
+  }
+}
+
+renderIntro();
+renderPuzzle();
 </script>
 </body>
 </html>
