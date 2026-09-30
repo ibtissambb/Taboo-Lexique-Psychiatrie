@@ -130,6 +130,14 @@
   }
   .hud-item{ flex:1; text-align:center; }
   #timerHudItem{ cursor:pointer; }
+  .round-progress{
+    font-family:'Fraunces',serif; font-weight:700; font-size:26px; color:var(--primary);
+    line-height:1.2;
+  }
+  .round-target{
+    font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.06em; margin-top:2px;
+  }
   .hud-label{ font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
   .hud-value{ font-family:'Fraunces',serif; font-weight:700; font-size:26px; color:var(--primary); line-height:1.2;}
   .hud-div{ width:1px; align-self:stretch; background:var(--line); }
@@ -301,6 +309,12 @@
   }
   .summary-score .ok{ background:rgba(62,124,74,.12); color:#3E7C4A; }
   .summary-score .ko{ background:rgba(140,74,66,.12); color:var(--accent); }
+  .summary-objective{
+    text-align:center; font-weight:700; font-size:14px;
+    padding:10px 12px; border-radius:10px; margin-bottom:18px;
+  }
+  .summary-objective.pass{ background:rgba(62,124,74,.12); color:#3E7C4A; }
+  .summary-objective.fail{ background:rgba(140,74,66,.1); color:var(--accent); }
   .summary-sub{
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
     text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:10px;
@@ -641,10 +655,31 @@ const MODE_TEXT = {
     scoreLabel: "Score",
   },
   solo: {
-    sub: "Manche chronométrée d'une minute : lis la définition et devine le bon mot.",
+    sub: "Manche de 6 questions : lis la définition, devine le bon mot. Objectif : 4 bonnes réponses sur 6.",
     scoreLabel: "Bonnes réponses",
   },
 };
+
+const ROUND_SIZE = 6;
+const PASS_THRESHOLD = 4;
+let roundQuestionIndex = 0;
+
+const DUO_HUD_MIDDLE = `
+  <div id="timerRing">
+    <svg width="56" height="56">
+      <circle cx="28" cy="28" r="23" fill="none" stroke="#e1e0d3" stroke-width="5"/>
+      <circle id="ringProgress" cx="28" cy="28" r="23" fill="none" stroke="var(--accent2)" stroke-width="5"
+        stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="0"/>
+    </svg>
+    <div id="timerVal">60</div>
+  </div>
+  <div id="timerPlay">appuyer ▸</div>
+`;
+
+const SOLO_HUD_MIDDLE = `
+  <div class="round-progress" id="roundProgress">0/6</div>
+  <div class="round-target">objectif 4/6</div>
+`;
 
 function setMode(m){
   mode = m;
@@ -653,6 +688,7 @@ function setMode(m){
   });
   document.getElementById('subText').textContent = MODE_TEXT[m].sub;
   document.getElementById('scoreLabel').textContent = MODE_TEXT[m].scoreLabel;
+  document.getElementById('timerHudItem').innerHTML = m==='solo' ? SOLO_HUD_MIDDLE : DUO_HUD_MIDDLE;
   stopTimer();
   clearTimeout(autoAdvanceTimeout);
   setScore(0);
@@ -660,13 +696,14 @@ function setMode(m){
   wrongCount = 0;
   missedWords = [];
   soloRoundActive = false;
+  roundQuestionIndex = 0;
   hasCardShown = false;
   document.getElementById('cardId').textContent = '';
   document.getElementById('catTab').style.visibility = 'hidden';
-  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt·e ?</div><div>${m==='solo' ? "Lance ta manche d'une minute." : 'Tire ta première carte pour commencer.'}</div></div>`;
+  document.getElementById('cardBody').innerHTML = `<div class="placeholder"><div class="big">Prêt·e ?</div><div>${m==='solo' ? "Lance ta manche de 6 questions." : 'Tire ta première carte pour commencer.'}</div></div>`;
   document.getElementById('diffSwitch').hidden = (m !== 'solo');
   document.getElementById('actionRow').innerHTML = m==='solo'
-    ? `<button class="btn-draw" id="drawBtn">🎮 Démarrer le quiz (1 min)</button>`
+    ? `<button class="btn-draw" id="drawBtn">🎮 Démarrer le quiz (6 questions)</button>`
     : `<button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>`;
   document.getElementById('drawBtn').addEventListener('click', handleDraw);
 }
@@ -807,10 +844,10 @@ function startSoloRound(){
   wrongCount = 0;
   missedWords = [];
   quizStreak = 0;
+  roundQuestionIndex = 0;
   soloRoundActive = true;
   refillPool();
   drawQuiz();
-  startTimer();
 }
 
 function normalizeAnswer(s){
@@ -844,9 +881,20 @@ function isCloseEnough(input, target){
   return { ok: dist <= threshold, exact:false };
 }
 
+function goToNextQuestionOrEnd(){
+  if(roundQuestionIndex >= ROUND_SIZE){
+    endSoloRound();
+  } else {
+    drawQuiz();
+  }
+}
+
 function drawQuiz(){
   if(pool.length===0) refillPool();
   if(pool.length===0) return;
+  roundQuestionIndex++;
+  const progressEl = document.getElementById('roundProgress');
+  if(progressEl) progressEl.textContent = `${roundQuestionIndex}/${ROUND_SIZE}`;
   const card = pool.pop();
   updateRemain();
   const cat = catMap[card.c];
@@ -893,7 +941,7 @@ function drawQuiz(){
   }
 
   document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">⏭️ Passer cette question</button>`;
-  document.getElementById('drawBtn').addEventListener('click', drawQuiz);
+  document.getElementById('drawBtn').addEventListener('click', goToNextQuestionOrEnd);
 }
 
 function handleTypedAnswer(card){
@@ -926,7 +974,7 @@ function handleTypedAnswer(card){
   }
   document.getElementById('actionRow').innerHTML = `<div class="auto-next">➡️ Question suivante…</div>`;
   clearTimeout(autoAdvanceTimeout);
-  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) drawQuiz(); }, 1400);
+  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) goToNextQuestionOrEnd(); }, 1400);
 }
 
 function handleQuizAnswer(btn, card){
@@ -954,7 +1002,7 @@ function handleQuizAnswer(btn, card){
   }
   document.getElementById('actionRow').innerHTML = `<div class="auto-next">➡️ Question suivante…</div>`;
   clearTimeout(autoAdvanceTimeout);
-  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) drawQuiz(); }, 1400);
+  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) goToNextQuestionOrEnd(); }, 1400);
 }
 
 function endSoloRound(){
@@ -970,17 +1018,23 @@ function endSoloRound(){
        </div>`
     : `<div class="summary-perfect">Aucune erreur, bravo ! 🎉</div>`;
 
+  const passed = score >= PASS_THRESHOLD;
+  const objectiveHtml = passed
+    ? `<div class="summary-objective pass">🎉 Objectif atteint (${PASS_THRESHOLD}/${ROUND_SIZE}) !</div>`
+    : `<div class="summary-objective fail">📚 Objectif non atteint (${PASS_THRESHOLD}/${ROUND_SIZE}) — retente ta chance !</div>`;
+
   document.getElementById('cardBody').innerHTML = `
     <div class="summary">
-      <div class="summary-title">⏱️ Temps écoulé !</div>
+      <div class="summary-title">Manche terminée !</div>
       <div class="summary-score">
         <span class="ok">✅ ${score} bonnes</span>
         <span class="ko">❌ ${wrongCount} fausses</span>
       </div>
+      ${objectiveHtml}
       ${reviewHtml}
     </div>
   `;
-  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🔄 Rejouer (1 min)</button>`;
+  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🔄 Rejouer (6 questions)</button>`;
   document.getElementById('drawBtn').addEventListener('click', startSoloRound);
 }
 
@@ -1038,9 +1092,12 @@ function setScore(v){
 
 function resetTimerDisplay(){
   timeLeft = TOTAL_TIME;
-  document.getElementById('timerVal').textContent = timeLeft;
-  document.getElementById('ringProgress').style.strokeDashoffset = 0;
-  document.getElementById('timerPlay').textContent = 'appuyer ▸';
+  const val = document.getElementById('timerVal');
+  const ring = document.getElementById('ringProgress');
+  const play = document.getElementById('timerPlay');
+  if(val) val.textContent = timeLeft;
+  if(ring) ring.style.strokeDashoffset = 0;
+  if(play) play.textContent = 'appuyer ▸';
 }
 
 function startTimer(){
@@ -1069,6 +1126,7 @@ function stopTimer(){
 }
 
 document.getElementById('timerHudItem').addEventListener('click', ()=>{
+  if(mode === 'solo') return;
   if(timerInterval){ stopTimer(); } else { startTimer(); }
 });
 
