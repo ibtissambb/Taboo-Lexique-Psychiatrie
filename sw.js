@@ -1,4 +1,4 @@
-const CACHE_NAME = "semio-defi-v18";
+const CACHE_NAME = "semio-defi-v19";
 const ASSETS = [
   "./",
   "./index.html",
