@@ -113,10 +113,11 @@
   .btn-taboo{ background:var(--accent); color:#fff; flex:0 0 21%; }
   .btn-taboo:hover{ background:#c44738; }
 
+  .action-row button.auto-next{ box-shadow:none; background:none; }
   .auto-next{
-    width:100%; text-align:center;
+    width:100%; text-align:center; background:none; border:none; cursor:pointer;
     font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px;
-    color:var(--muted); padding:15px 10px;
+    color:var(--muted); padding:15px 10px; box-shadow:none;
   }
 
   /* ---------- HUD ---------- */
@@ -792,7 +793,7 @@ try { quizBest = parseInt(localStorage.getItem('semioDefiBestStreak') || '0', 10
 let difficulty = 'intermediaire';
 const DIFF_CONFIG = {
   novice:        { choices: 2, distractorMode: 'diff' },
-  intermediaire: { choices: 4, distractorMode: 'mix'  },
+  intermediaire: { choices: 6, distractorMode: 'same' },
   expert:        { typed: true },
 };
 
@@ -944,6 +945,17 @@ function drawQuiz(){
   document.getElementById('drawBtn').addEventListener('click', goToNextQuestionOrEnd);
 }
 
+const DELAY_AFTER_CORRECT = 2500;
+const DELAY_AFTER_WRONG = 5000;
+
+function scheduleNextQuestion(wasCorrect){
+  document.getElementById('actionRow').innerHTML = `<button class="auto-next" id="nextNowBtn" type="button">➡️ Question suivante… (touche pour continuer)</button>`;
+  clearTimeout(autoAdvanceTimeout);
+  const goNext = ()=>{ clearTimeout(autoAdvanceTimeout); if(soloRoundActive) goToNextQuestionOrEnd(); };
+  document.getElementById('nextNowBtn').addEventListener('click', goNext);
+  autoAdvanceTimeout = setTimeout(goNext, wasCorrect ? DELAY_AFTER_CORRECT : DELAY_AFTER_WRONG);
+}
+
 function handleTypedAnswer(card){
   const input = document.getElementById('typedInput');
   const submitBtn = document.getElementById('typedSubmit');
@@ -972,9 +984,7 @@ function handleTypedAnswer(card){
     feedback.className = 'quiz-feedback bad';
     feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
   }
-  document.getElementById('actionRow').innerHTML = `<div class="auto-next">➡️ Question suivante…</div>`;
-  clearTimeout(autoAdvanceTimeout);
-  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) goToNextQuestionOrEnd(); }, 1400);
+  scheduleNextQuestion(result.ok);
 }
 
 function handleQuizAnswer(btn, card){
@@ -1000,9 +1010,7 @@ function handleQuizAnswer(btn, card){
     feedback.className = 'quiz-feedback bad';
     feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
   }
-  document.getElementById('actionRow').innerHTML = `<div class="auto-next">➡️ Question suivante…</div>`;
-  clearTimeout(autoAdvanceTimeout);
-  autoAdvanceTimeout = setTimeout(()=>{ if(soloRoundActive) goToNextQuestionOrEnd(); }, 1400);
+  scheduleNextQuestion(btn.dataset.word === card.w);
 }
 
 function endSoloRound(){
