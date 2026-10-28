@@ -316,6 +316,10 @@
   }
   .summary-objective.pass{ background:rgba(62,124,74,.12); color:#3E7C4A; }
   .summary-objective.fail{ background:rgba(140,74,66,.1); color:var(--accent); }
+  .summary-remaining{
+    text-align:center; font-size:12.5px; font-weight:600; color:var(--muted);
+    margin-top:16px; line-height:1.4;
+  }
   .summary-sub{
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em;
     text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:10px;
@@ -707,6 +711,7 @@ function setMode(m){
     ? `<button class="btn-draw" id="drawBtn">🎮 Démarrer le quiz (6 questions)</button>`
     : `<button class="btn-draw" id="drawBtn">🎴 Tirer une carte</button>`;
   document.getElementById('drawBtn').addEventListener('click', handleDraw);
+  updateRemain();
 }
 
 function handleDraw(){
@@ -730,7 +735,7 @@ function refillPool(){
 }
 
 function updateRemain(){
-  document.getElementById('remainVal').textContent = pool.length;
+  document.getElementById('remainVal').textContent = (mode === 'solo') ? eligibleSoloCards().length : pool.length;
 }
 
 function updateFilterSummary(){
@@ -840,14 +845,66 @@ let missedWords = [];
 let soloRoundActive = false;
 let autoAdvanceTimeout = null;
 
+// Solo progress is kept from one round to the next:
+// a card answered correctly is not asked again; a card answered wrongly comes back.
+let soloMastered = new Set();
+let soloRetry = new Set();
+let roundQueue = [];
+let roundTotal = ROUND_SIZE;
+
+function eligibleSoloCards(){
+  return DECK.filter(d => activeCats.has(d.c) && !soloMastered.has(d.w));
+}
+
+function roundThreshold(){
+  return Math.min(PASS_THRESHOLD, Math.ceil(roundTotal * PASS_THRESHOLD / ROUND_SIZE));
+}
+
+function buildRound(){
+  const eligible = eligibleSoloCards();
+  const retries = shuffleArr(eligible.filter(d => soloRetry.has(d.w)));
+  const fresh = shuffleArr(eligible.filter(d => !soloRetry.has(d.w)));
+  const maxRetries = Math.min(retries.length, Math.floor(ROUND_SIZE / 2));
+  let picked = retries.slice(0, maxRetries);
+  picked = picked.concat(fresh.slice(0, ROUND_SIZE - picked.length));
+  if(picked.length < ROUND_SIZE){
+    picked = picked.concat(retries.slice(maxRetries, maxRetries + (ROUND_SIZE - picked.length)));
+  }
+  return shuffleArr(picked);
+}
+
+function resetSoloProgress(){
+  soloMastered = new Set();
+  soloRetry = new Set();
+  updateRemain();
+}
+
+function showSoloAllDone(){
+  soloRoundActive = false;
+  clearTimeout(autoAdvanceTimeout);
+  document.getElementById('catTab').style.visibility = 'hidden';
+  document.getElementById('cardId').textContent = '';
+  document.getElementById('cardBody').innerHTML = `
+    <div class="summary">
+      <div class="summary-title">🏆 Bravo !</div>
+      <div class="summary-perfect">Tu as maîtrisé toutes les cartes des catégories sélectionnées.</div>
+    </div>
+  `;
+  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🔁 Recommencer à zéro</button>`;
+  document.getElementById('drawBtn').addEventListener('click', ()=>{ resetSoloProgress(); startSoloRound(); });
+  updateRemain();
+}
+
 function startSoloRound(){
+  roundQueue = buildRound();
+  if(roundQueue.length === 0){ showSoloAllDone(); return; }
+  roundTotal = roundQueue.length;
   setScore(0);
   wrongCount = 0;
   missedWords = [];
   quizStreak = 0;
   roundQuestionIndex = 0;
   soloRoundActive = true;
-  refillPool();
   drawQuiz();
 }
 
@@ -883,7 +940,7 @@ function isCloseEnough(input, target){
 }
 
 function goToNextQuestionOrEnd(){
-  if(roundQuestionIndex >= ROUND_SIZE){
+  if(roundQuestionIndex >= roundTotal){
     endSoloRound();
   } else {
     drawQuiz();
@@ -891,12 +948,13 @@ function goToNextQuestionOrEnd(){
 }
 
 function drawQuiz(){
-  if(pool.length===0) refillPool();
-  if(pool.length===0) return;
+  if(roundQueue.length===0){ endSoloRound(); return; }
   roundQuestionIndex++;
   const progressEl = document.getElementById('roundProgress');
-  if(progressEl) progressEl.textContent = `${roundQuestionIndex}/${ROUND_SIZE}`;
-  const card = pool.pop();
+  if(progressEl) progressEl.textContent = `${roundQuestionIndex}/${roundTotal}`;
+  const targetEl = document.querySelector('.round-target');
+  if(targetEl) targetEl.textContent = `objectif ${roundThreshold()}/${roundTotal}`;
+  const card = roundQueue.shift();
   updateRemain();
   const cat = catMap[card.c];
   const tab = document.getElementById('catTab');
@@ -967,6 +1025,9 @@ function handleTypedAnswer(card){
   if(result.ok){
     input.classList.add('correct');
     setScore(score+1);
+    soloMastered.add(card.w);
+    soloRetry.delete(card.w);
+    updateRemain();
     quizStreak++;
     if(quizStreak > quizBest){
       quizBest = quizStreak;
@@ -980,6 +1041,7 @@ function handleTypedAnswer(card){
     input.classList.add('wrong');
     quizStreak = 0;
     wrongCount++;
+    soloRetry.add(card.w);
     missedWords.push({ w: card.w, d: card.d });
     feedback.className = 'quiz-feedback bad';
     feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
@@ -994,6 +1056,9 @@ function handleQuizAnswer(btn, card){
   if(btn.dataset.word === card.w){
     btn.classList.add('correct');
     setScore(score+1);
+    soloMastered.add(card.w);
+    soloRetry.delete(card.w);
+    updateRemain();
     quizStreak++;
     if(quizStreak > quizBest){
       quizBest = quizStreak;
@@ -1006,6 +1071,7 @@ function handleQuizAnswer(btn, card){
     allBtns.forEach(b=>{ if(b.dataset.word === card.w) b.classList.add('correct'); });
     quizStreak = 0;
     wrongCount++;
+    soloRetry.add(card.w);
     missedWords.push({ w: card.w, d: card.d });
     feedback.className = 'quiz-feedback bad';
     feedback.innerHTML = `❌ Pas tout à fait — la bonne réponse était <strong>${card.w}</strong>.`;
@@ -1026,10 +1092,13 @@ function endSoloRound(){
        </div>`
     : `<div class="summary-perfect">Aucune erreur, bravo ! 🎉</div>`;
 
-  const passed = score >= PASS_THRESHOLD;
+  const threshold = roundThreshold();
+  const passed = score >= threshold;
   const objectiveHtml = passed
-    ? `<div class="summary-objective pass">🎉 Objectif atteint (${PASS_THRESHOLD}/${ROUND_SIZE}) !</div>`
-    : `<div class="summary-objective fail">📚 Objectif non atteint (${PASS_THRESHOLD}/${ROUND_SIZE}) — retente ta chance !</div>`;
+    ? `<div class="summary-objective pass">🎉 Objectif atteint (${threshold}/${roundTotal}) !</div>`
+    : `<div class="summary-objective fail">📚 Objectif non atteint (${threshold}/${roundTotal}) — retente ta chance !</div>`;
+  const remaining = eligibleSoloCards().length;
+  const remainingHtml = `<div class="summary-remaining">${missedWords.length ? 'Les mots ratés reviendront dans une prochaine manche. ' : ''}${remaining > 0 ? remaining + ' carte' + (remaining > 1 ? 's' : '') + ' restante' + (remaining > 1 ? 's' : '') + ' à maîtriser.' : '🏆 Toutes les cartes sont maîtrisées !'}</div>`;
 
   document.getElementById('cardBody').innerHTML = `
     <div class="summary">
@@ -1040,10 +1109,17 @@ function endSoloRound(){
       </div>
       ${objectiveHtml}
       ${reviewHtml}
+      ${remainingHtml}
     </div>
   `;
-  document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🔄 Rejouer (6 questions)</button>`;
-  document.getElementById('drawBtn').addEventListener('click', startSoloRound);
+  if(remaining > 0){
+    document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">▶️ Manche suivante (${Math.min(ROUND_SIZE, remaining)} questions)</button>`;
+    document.getElementById('drawBtn').addEventListener('click', startSoloRound);
+  } else {
+    document.getElementById('actionRow').innerHTML = `<button class="btn-draw" id="drawBtn">🔁 Recommencer à zéro</button>`;
+    document.getElementById('drawBtn').addEventListener('click', ()=>{ resetSoloProgress(); startSoloRound(); });
+  }
+  updateRemain();
 }
 
 
@@ -1167,6 +1243,7 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
   renderCats();
   updateFilterSummary();
   refillPool();
+  resetSoloProgress();
   setMode(mode);
 });
 
